@@ -9,7 +9,7 @@ import {
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 
-import { bullFunnyHtmlLoader } from '../BullConstants/bullFunnyHtmlLoader';
+import { bullFunnyHtmlLoader } from '../Constants/bullFunnyHtmlLoader';
 
 const bgColor = '#000';
 const logo = require('../assets/images/loade_lLogo.png');

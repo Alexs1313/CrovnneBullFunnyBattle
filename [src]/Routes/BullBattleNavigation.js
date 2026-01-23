@@ -2,18 +2,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // local imports
 
-import WelcomeLoader from '../BullBattleScreens/WelcomeLoader';
-import CrovnneBullOnboard from '../BullBattleScreens/CrovnneBullOnboard';
-import FunnyBattleMenu from '../BullBattleScreens/FunnyBattleMenu';
-import TellBullJokeScreen from '../BullBattleScreens/TellBullJokeScreen';
-import SelectionOfJokesScreen from '../BullBattleScreens/SelectionOfJokesScreen';
-import SavedJokesScreen from '../BullBattleScreens/SavedJokesScreen';
-import AboutBullScreen from '../BullBattleScreens/AboutBullScreen';
-import PlayTogetherScreen from '../BullBattleScreens/PlayTogetherScreen';
+import WelcomeLoader from '../BattleScreens/WelcomeLoader';
+import CrovnneBullOnboard from '../BattleScreens/CrovnneBullOnboard';
+import FunnyBattleMenu from '../BattleScreens/FunnyBattleMenu';
+import TellBullJokeScreen from '../BattleScreens/TellBullJokeScreen';
+import SelectionOfJokesScreen from '../BattleScreens/SelectionOfJokesScreen';
+import SavedJokesScreen from '../BattleScreens/SavedJokesScreen';
+import AboutBullScreen from '../BattleScreens/AboutBullScreen';
+import PlayTogetherScreen from '../BattleScreens/PlayTogetherScreen';
 
 const Stack = createStackNavigator();
 
-// bull battle stack screens
+// stack screens
 
 const BullBattleNavigation = () => {
   return (

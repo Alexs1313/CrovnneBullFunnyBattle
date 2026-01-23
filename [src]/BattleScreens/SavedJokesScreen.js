@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useStorage } from '../FunnyButtleStore/bullBattleContext';
+import { useStorage } from '../Storage/bullBattleContext';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';

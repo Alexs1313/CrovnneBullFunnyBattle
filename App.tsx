@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
-import BullBattleNavigation from './[CrovnneBullFunnyBattle]/CrovnneBullRoutes/BullBattleNavigation';
-import { StoreProvider } from './[CrovnneBullFunnyBattle]/FunnyButtleStore/bullBattleContext';
+import BullBattleNavigation from './[src]/Routes/BullBattleNavigation';
+import { StoreProvider } from './[src]/Storage/bullBattleContext';
 
 const App = () => {
   return (
