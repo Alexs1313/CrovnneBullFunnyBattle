@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   ImageBackground,
+  Platform,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
@@ -59,7 +60,14 @@ const WelcomeLoader = () => {
               alignItems: 'center',
             }}
           >
-            <Image source={logo} />
+            {Platform.OS === 'ios' ? (
+              <Image source={logo} />
+            ) : (
+              <Image
+                source={require('../assets/images/icon.png')}
+                style={{ width: 250, height: 250, borderRadius: 42 }}
+              />
+            )}
           </ImageBackground>
         </View>
 

@@ -10,6 +10,7 @@ import {
   useWindowDimensions,
   ScrollView,
   Share,
+  Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -141,11 +142,24 @@ const TellBullJokeScreen = () => {
             <Image source={require('../assets/icons/back_arrow.png')} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Tell a jokes</Text>
-
-          <Image
-            source={require('../assets/images/app_icon.png')}
-            style={styles.appIcon}
-          />
+          {Platform.OS === 'ios' ? (
+            <Image
+              source={require('../assets/images/app_icon.png')}
+              style={styles.appIcon}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={[
+                styles.appIcon,
+                {
+                  borderRadius: 12,
+                  borderWidth: 0.8,
+                  borderColor: '#E6CE67',
+                },
+              ]}
+            />
+          )}
         </View>
         {state !== STATES.RECORDING && (
           <Text
@@ -279,7 +293,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   button: {
-    width: 265,
+    width: 268,
     height: 67,
     borderRadius: 18,
     justifyContent: 'center',
@@ -289,7 +303,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: regFont,
-    fontSize: 18,
+    fontSize: 17,
     color: '#000',
   },
 });

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {
   Image,
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -61,10 +62,17 @@ const CrovnneBullOnboard = () => {
           source={require('../assets/images/back_blur.png')}
           style={s.bgBlur}
         >
-          <Image
-            source={require('../assets/images/loade_lLogo.png')}
-            style={{ width: 80, height: 80 }}
-          />
+          {Platform.OS === 'ios' ? (
+            <Image
+              source={require('../assets/images/loade_lLogo.png')}
+              style={{ width: 80, height: 80 }}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={{ width: 80, height: 80, borderRadius: 8 }}
+            />
+          )}
         </ImageBackground>
 
         <View style={s.pagination}>

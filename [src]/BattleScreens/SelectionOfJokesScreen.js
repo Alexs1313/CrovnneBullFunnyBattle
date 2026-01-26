@@ -10,6 +10,7 @@ import {
   ScrollView,
   Share,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -102,10 +103,24 @@ const SelectionOfJokesScreen = () => {
 
           <Text style={styles.headerTitle}>Selection of jokes</Text>
 
-          <Image
-            source={require('../assets/images/app_icon.png')}
-            style={styles.appIcon}
-          />
+          {Platform.OS === 'ios' ? (
+            <Image
+              source={require('../assets/images/app_icon.png')}
+              style={styles.appIcon}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={[
+                styles.appIcon,
+                {
+                  borderRadius: 12,
+                  borderWidth: 0.8,
+                  borderColor: '#E6CE67',
+                },
+              ]}
+            />
+          )}
         </View>
 
         {!selectedJoke ? (

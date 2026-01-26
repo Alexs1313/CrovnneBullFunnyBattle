@@ -12,6 +12,7 @@ import {
   Modal,
   useWindowDimensions,
   Alert,
+  Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -122,10 +123,20 @@ const PlayTogetherScreen = () => {
 
       <Text style={styles.headerTitle}>Play together</Text>
 
-      <Image
-        source={require('../assets/images/app_icon.png')}
-        style={styles.appIcon}
-      />
+      {Platform.OS === 'ios' ? (
+        <Image
+          source={require('../assets/images/app_icon.png')}
+          style={styles.appIcon}
+        />
+      ) : (
+        <Image
+          source={require('../assets/images/icon.png')}
+          style={[
+            styles.appIcon,
+            { borderRadius: 12, borderWidth: 0.8, borderColor },
+          ]}
+        />
+      )}
     </View>
   );
 
@@ -273,6 +284,7 @@ const PlayTogetherScreen = () => {
             placeholder="Write a joke"
             placeholderTextColor="#FFFFFF"
             style={styles.jokeInput}
+            textAlignVertical="top"
             value={player.joke}
             onChangeText={t => {
               const copy = [...players];

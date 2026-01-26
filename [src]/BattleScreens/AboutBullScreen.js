@@ -9,6 +9,7 @@ import {
   ScrollView,
   Share,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -49,17 +50,46 @@ const AboutBullScreen = () => {
 
           <Text style={styles.headerTitle}>About</Text>
 
-          <Image
-            source={require('../assets/images/app_icon.png')}
-            style={styles.appIcon}
-          />
+          {Platform.OS === 'ios' ? (
+            <Image
+              source={require('../assets/images/app_icon.png')}
+              style={styles.appIcon}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={[
+                styles.appIcon,
+                {
+                  borderRadius: 12,
+                  borderWidth: 0.8,
+                  borderColor: '#E6CE67',
+                },
+              ]}
+            />
+          )}
         </View>
 
         <View style={styles.logoCard}>
-          <Image
-            source={require('../assets/images/about_logo.png')}
-            style={styles.logoImage}
-          />
+          {Platform.OS === 'ios' ? (
+            <Image
+              source={require('../assets/images/about_logo.png')}
+              style={styles.logoImage}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={[
+                {
+                  width: 320,
+                  height: 320,
+                  borderRadius: 22,
+                  borderWidth: 0.8,
+                  borderColor: '#E6CE67',
+                },
+              ]}
+            />
+          )}
         </View>
 
         <Text style={styles.description}>

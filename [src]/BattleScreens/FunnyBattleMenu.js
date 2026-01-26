@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import {
   Image,
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -35,7 +36,14 @@ const FunnyBattleMenu = () => {
           source={require('../assets/images/back_blur.png')}
           style={s.backgroundBlur}
         >
-          <Image source={require('../assets/images/menu_logo.png')} />
+          {Platform.OS === 'ios' ? (
+            <Image source={require('../assets/images/menu_logo.png')} />
+          ) : (
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={{ width: 230, height: 230, borderRadius: 22 }}
+            />
+          )}
         </ImageBackground>
         <TouchableOpacity
           activeOpacity={0.6}
