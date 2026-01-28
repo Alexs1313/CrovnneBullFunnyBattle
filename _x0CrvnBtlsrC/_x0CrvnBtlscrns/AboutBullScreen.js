@@ -1,31 +1,31 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation as _uNV_qpLxVnZaKsTrmR } from '@react-navigation/native';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Share,
-  useWindowDimensions,
-  Platform,
+  View as _vW_tVmQpLxZrKsN,
+  Text as _tXt_aKsQpLxVnZtRm,
+  StyleSheet as _sSy_tZmQpLxVnRksA,
+  Image as _iMg_pLxQnZtVmRksA,
+  TouchableOpacity as _tOp_nRksQpLxVtZmA,
+  ScrollView as _sCv_qpLxVnRksTmZa,
+  Share as _sHr_pLxVnZaKsTrmQ,
+  useWindowDimensions as _uWD_qpLxVnZaKsTrmR,
+  Platform as _pLf_qpLxVnZaKsTrmR,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const regFont = 'OrelegaOne-Regular';
-const bgColor = '#000';
-const goldGradient = ['#FFF9CC', '#E2C23B'];
-const startPosition = { x: 0, y: 0 };
-const endPosition = { x: 0, y: 1.2 };
+const _rgFn_qpLxVnZaKsTrmR = 'OrelegaOne-Regular';
+const _bgCl_qpLxVnZaKsTrmR = '#000';
+const _gdGr_qpLxVnZaKsTrmR = ['#FFF9CC', '#E2C23B'];
+const _stPs_qpLxVnZaKsTrmR = { x: 0, y: 0 };
+const _enPs_qpLxVnZaKsTrmR = { x: 0, y: 1.2 };
 
 const AboutBullScreen = () => {
-  const navigation = useNavigation();
-  const { height } = useWindowDimensions();
+  const _nv_qpLxVnZaKsTrmR = _uNV_qpLxVnZaKsTrmR();
+  const { height: _ht_qpLxVnZaKsTrmR } = _uWD_qpLxVnZaKsTrmR();
 
-  const onShare = async () => {
+  const _sh_qpLxVnZaKsTrmR = async () => {
     try {
-      await Share.share({
+      await _sHr_pLxVnZaKsTrmQ.share({
         message:
           'Crovnne Bull Funny Battle is a fun social app for humorous competitions between friends. Write or voice your jokes, vote for the best ones, and find out the verdict of the charismatic Bull. Collect your favorite jokes, open categories, and prove that your humor is worthy of the crown.',
       });
@@ -36,30 +36,35 @@ const AboutBullScreen = () => {
 
   return (
     <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+      <_sCv_qpLxVnRksTmZa
+        contentContainerStyle={[
+          _st.s_sc,
+          { paddingTop: _ht_qpLxVnZaKsTrmR * 0.07 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
+        <_vW_tVmQpLxZrKsN style={_st.s_hd}>
+          <_tOp_nRksQpLxVtZmA
+            style={_st.s_bk}
+            onPress={() => _nv_qpLxVnZaKsTrmR.goBack()}
           >
-            <Image source={require('../assets/icons/back_arrow.png')} />
-          </TouchableOpacity>
+            <_iMg_pLxQnZtVmRksA
+              source={require('../assets/icons/back_arrow.png')}
+            />
+          </_tOp_nRksQpLxVtZmA>
 
-          <Text style={styles.headerTitle}>About</Text>
+          <_tXt_aKsQpLxVnZtRm style={_st.s_tt}>About</_tXt_aKsQpLxVnZtRm>
 
-          {Platform.OS === 'ios' ? (
-            <Image
+          {_pLf_qpLxVnZaKsTrmR.OS === 'ios' ? (
+            <_iMg_pLxQnZtVmRksA
               source={require('../assets/images/app_icon.png')}
-              style={styles.appIcon}
+              style={_st.s_ic}
             />
           ) : (
-            <Image
+            <_iMg_pLxQnZtVmRksA
               source={require('../assets/images/icon.png')}
               style={[
-                styles.appIcon,
+                _st.s_ic,
                 {
                   borderRadius: 12,
                   borderWidth: 0.8,
@@ -68,11 +73,11 @@ const AboutBullScreen = () => {
               ]}
             />
           )}
-        </View>
+        </_vW_tVmQpLxZrKsN>
 
-        <View style={styles.logoCard}>
-          {Platform.OS === 'ios' ? (
-            <Image
+        <_vW_tVmQpLxZrKsN style={_st.s_lg}>
+          {_pLf_qpLxVnZaKsTrmR.OS === 'ios' ? (
+            <_iMg_pLxQnZtVmRksA
               source={require('../assets/images/about_logo.png')}
               style={{
                 width: 250,
@@ -83,55 +88,53 @@ const AboutBullScreen = () => {
               }}
             />
           ) : (
-            <Image
+            <_iMg_pLxQnZtVmRksA
               source={require('../assets/images/icon.png')}
-              style={[
-                {
-                  width: 320,
-                  height: 320,
-                  borderRadius: 22,
-                  borderWidth: 0.8,
-                  borderColor: '#E6CE67',
-                },
-              ]}
+              style={{
+                width: 320,
+                height: 320,
+                borderRadius: 22,
+                borderWidth: 0.8,
+                borderColor: '#E6CE67',
+              }}
             />
           )}
-        </View>
+        </_vW_tVmQpLxZrKsN>
 
-        <Text style={styles.description}>
+        <_tXt_aKsQpLxVnZtRm style={_st.s_ds}>
           Crovnne Bull Funny Battle is a fun social app for humorous
           competitions between friends. Write or voice your jokes, vote for the
           best ones and find out the verdict of the charismatic Bull. Collect
           your favorite jokes, open categories and prove that your humor is
           worthy of the crown.
-        </Text>
+        </_tXt_aKsQpLxVnZtRm>
 
-        <TouchableOpacity activeOpacity={0.7} onPress={onShare}>
+        <_tOp_nRksQpLxVtZmA activeOpacity={0.7} onPress={_sh_qpLxVnZaKsTrmR}>
           <LinearGradient
-            colors={goldGradient}
-            start={startPosition}
-            end={endPosition}
-            style={styles.shareButton}
+            colors={_gdGr_qpLxVnZaKsTrmR}
+            start={_stPs_qpLxVnZaKsTrmR}
+            end={_enPs_qpLxVnZaKsTrmR}
+            style={_st.s_sb}
           >
-            <Text style={styles.shareText}>Share</Text>
+            <_tXt_aKsQpLxVnZtRm style={_st.s_st}>Share</_tXt_aKsQpLxVnZtRm>
           </LinearGradient>
-        </TouchableOpacity>
-      </ScrollView>
+        </_tOp_nRksQpLxVtZmA>
+      </_sCv_qpLxVnRksTmZa>
     </LinearGradient>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
+const _st = _sSy_tZmQpLxVnRksA.create({
+  s_ct: {
     flex: 1,
-    backgroundColor: bgColor,
+    backgroundColor: _bgCl_qpLxVnZaKsTrmR,
   },
-  scroll: {
+  s_sc: {
     alignItems: 'center',
     padding: 20,
     flexGrow: 1,
   },
-  header: {
+  s_hd: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -142,7 +145,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 40,
   },
-  backButton: {
+  s_bk: {
     width: 56,
     height: 56,
     borderRadius: 12,
@@ -151,40 +154,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTitle: {
+  s_tt: {
     color: '#fff',
-    fontFamily: regFont,
+    fontFamily: _rgFn_qpLxVnZaKsTrmR,
     fontSize: 20,
   },
-  appIcon: {
+  s_ic: {
     width: 56,
     height: 56,
   },
-  logoCard: {
+  s_lg: {
     marginBottom: 30,
   },
-  logoImage: {
+  s_li: {
     resizeMode: 'cover',
   },
-  description: {
+  s_ds: {
     color: '#fff',
-    fontFamily: regFont,
+    fontFamily: _rgFn_qpLxVnZaKsTrmR,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: 40,
     paddingHorizontal: 10,
   },
-  shareButton: {
+  s_sb: {
     width: 260,
     height: 64,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  shareText: {
+  s_st: {
     color: '#000',
-    fontFamily: regFont,
+    fontFamily: _rgFn_qpLxVnZaKsTrmR,
     fontSize: 20,
   },
 });

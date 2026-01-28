@@ -1,12 +1,12 @@
 import { NavigationContainer } from '@react-navigation/native';
-import BullBattleNavigation from './[src]/Routes/BullBattleNavigation';
-import { StoreProvider } from './[src]/Storage/bullBattleContext';
+import { StoreProvider } from './_x0CrvnBtlsrC/_x0CrvnBtlstrg/bullBattleContext';
+import CrvnBtlstCknv from './_x0CrvnBtlsrC/_x0CrvnBtlrts/CrvnBtlstCknv';
 
 const App = () => {
   return (
     <NavigationContainer>
       <StoreProvider>
-        <BullBattleNavigation />
+        <CrvnBtlstCknv />
       </StoreProvider>
     </NavigationContainer>
   );

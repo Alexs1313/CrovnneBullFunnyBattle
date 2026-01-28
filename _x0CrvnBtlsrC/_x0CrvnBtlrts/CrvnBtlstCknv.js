@@ -1,21 +1,17 @@
 import { createStackNavigator } from '@react-navigation/stack';
 
-// local imports
-
-import WelcomeLoader from '../BattleScreens/WelcomeLoader';
-import CrovnneBullOnboard from '../BattleScreens/CrovnneBullOnboard';
-import FunnyBattleMenu from '../BattleScreens/FunnyBattleMenu';
-import TellBullJokeScreen from '../BattleScreens/TellBullJokeScreen';
-import SelectionOfJokesScreen from '../BattleScreens/SelectionOfJokesScreen';
-import SavedJokesScreen from '../BattleScreens/SavedJokesScreen';
-import AboutBullScreen from '../BattleScreens/AboutBullScreen';
-import PlayTogetherScreen from '../BattleScreens/PlayTogetherScreen';
+import WelcomeLoader from '../_x0CrvnBtlscrns/WelcomeLoader';
+import CrovnneBullOnboard from '../_x0CrvnBtlscrns/CrovnneBullOnboard';
+import FunnyBattleMenu from '../_x0CrvnBtlscrns/FunnyBattleMenu';
+import TellBullJokeScreen from '../_x0CrvnBtlscrns/TellBullJokeScreen';
+import SelectionOfJokesScreen from '../_x0CrvnBtlscrns/SelectionOfJokesScreen';
+import SavedJokesScreen from '../_x0CrvnBtlscrns/SavedJokesScreen';
+import AboutBullScreen from '../_x0CrvnBtlscrns/AboutBullScreen';
+import PlayTogetherScreen from '../_x0CrvnBtlscrns/PlayTogetherScreen';
 
 const Stack = createStackNavigator();
 
-// stack screens
-
-const BullBattleNavigation = () => {
+const CrvnBtlstCknv = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="WelcomeLoader" component={WelcomeLoader} />
@@ -33,4 +29,4 @@ const BullBattleNavigation = () => {
   );
 };
 
-export default BullBattleNavigation;
+export default CrvnBtlstCknv;
