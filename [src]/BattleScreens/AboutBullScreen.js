@@ -15,9 +15,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
+const goldGradient = ['#FFF9CC', '#E2C23B'];
 const startPosition = { x: 0, y: 0 };
-const endPosition = { x: 1, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 
 const AboutBullScreen = () => {
   const navigation = useNavigation();
@@ -35,7 +35,7 @@ const AboutBullScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
         showsVerticalScrollIndicator={false}
@@ -74,7 +74,13 @@ const AboutBullScreen = () => {
           {Platform.OS === 'ios' ? (
             <Image
               source={require('../assets/images/about_logo.png')}
-              style={styles.logoImage}
+              style={{
+                width: 250,
+                height: 250,
+                borderRadius: 22,
+                borderWidth: 1,
+                borderColor: '#E6CE67',
+              }}
             />
           ) : (
             <Image
@@ -111,7 +117,7 @@ const AboutBullScreen = () => {
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

@@ -48,7 +48,7 @@ const SavedJokesScreen = () => {
 
   if (!saved.length) {
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
           showsVerticalScrollIndicator={false}
@@ -89,12 +89,12 @@ const SavedJokesScreen = () => {
             </Text>
           </View>
         </ScrollView>
-      </View>
+      </LinearGradient>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
         showsVerticalScrollIndicator={false}
@@ -158,7 +158,7 @@ const SavedJokesScreen = () => {
           );
         })}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

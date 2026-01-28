@@ -19,9 +19,9 @@ import { jokesCategories } from '../BattleData/jokesCategories';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
-const endPosition = { x: 1, y: 0 };
+const goldGradient = ['#FFF9CC', '#E2C23B'];
+const startPosition = { x: 0, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 const borderColor = '#E6CE67';
 
 const SelectionOfJokesScreen = () => {
@@ -89,7 +89,7 @@ const SelectionOfJokesScreen = () => {
     setIndex((index - 1 + jokesCategories.length) % jokesCategories.length);
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
       >
@@ -211,7 +211,7 @@ const SelectionOfJokesScreen = () => {
           </>
         )}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

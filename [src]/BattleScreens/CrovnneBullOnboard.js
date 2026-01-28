@@ -25,11 +25,10 @@ const onboardTitles = [
   require('../assets/images/onboard_title_3.png'),
 ];
 
-const bgColor = '#000';
 const regFont = 'OrelegaOne-Regular';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
-const endPosition = { x: 1, y: 0 };
+const goldGradient = ['#FFF9CC', '#E2C23B'];
+const startPosition = { x: 0, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 
 const CrovnneBullOnboard = () => {
   const { height } = useWindowDimensions();
@@ -47,7 +46,7 @@ const CrovnneBullOnboard = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: bgColor }}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         bounces={false}
@@ -64,8 +63,14 @@ const CrovnneBullOnboard = () => {
         >
           {Platform.OS === 'ios' ? (
             <Image
-              source={require('../assets/images/loade_lLogo.png')}
-              style={{ width: 80, height: 80 }}
+              source={require('../assets/images/about_logo.png')}
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 8,
+                borderWidth: 0.5,
+                borderColor: '#E6CE67',
+              }}
             />
           ) : (
             <Image
@@ -135,7 +140,7 @@ const CrovnneBullOnboard = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

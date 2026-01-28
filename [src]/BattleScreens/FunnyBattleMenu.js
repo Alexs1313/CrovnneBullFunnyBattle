@@ -15,9 +15,9 @@ import LinearGradient from 'react-native-linear-gradient';
 const primaryFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
 const bordersColor = '#E6CE67';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
-const endPosition = { x: 1, y: 0 };
+const goldGradient = ['#FFF9CC', '#E2C23B'];
+const startPosition = { x: 0, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 
 const FunnyBattleMenu = () => {
   const navigation = useNavigation();
@@ -27,7 +27,7 @@ const FunnyBattleMenu = () => {
   };
 
   return (
-    <View style={[s.mainContainer]}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scrollContainer}
@@ -37,7 +37,16 @@ const FunnyBattleMenu = () => {
           style={s.backgroundBlur}
         >
           {Platform.OS === 'ios' ? (
-            <Image source={require('../assets/images/menu_logo.png')} />
+            <Image
+              source={require('../assets/images/about_logo.png')}
+              style={{
+                width: 250,
+                height: 250,
+                borderRadius: 22,
+                borderWidth: 1,
+                borderColor: '#E6CE67',
+              }}
+            />
           ) : (
             <Image
               source={require('../assets/images/icon.png')}
@@ -92,7 +101,7 @@ const FunnyBattleMenu = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

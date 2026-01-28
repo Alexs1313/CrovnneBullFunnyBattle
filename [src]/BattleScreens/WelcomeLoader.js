@@ -11,9 +11,9 @@ import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 
 import { bullFunnyHtmlLoader } from '../Constants/bullFunnyHtmlLoader';
+import LinearGradient from 'react-native-linear-gradient';
 
-const bgColor = '#000';
-const logo = require('../assets/images/loade_lLogo.png');
+const logo = require('../assets/images/about_logo.png');
 
 const WelcomeLoader = () => {
   const nav = useNavigation();
@@ -45,7 +45,7 @@ const WelcomeLoader = () => {
   }, [nav]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: bgColor }}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -61,7 +61,16 @@ const WelcomeLoader = () => {
             }}
           >
             {Platform.OS === 'ios' ? (
-              <Image source={logo} />
+              <Image
+                source={logo}
+                style={{
+                  width: 250,
+                  height: 250,
+                  borderRadius: 22,
+                  borderWidth: 1,
+                  borderColor: '#E6CE67',
+                }}
+              />
             ) : (
               <Image
                 source={require('../assets/images/icon.png')}
@@ -87,7 +96,7 @@ const WelcomeLoader = () => {
           />
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

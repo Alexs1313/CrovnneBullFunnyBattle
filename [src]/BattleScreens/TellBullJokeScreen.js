@@ -16,9 +16,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
-const endPosition = { x: 1, y: 0 };
+const goldGradient = ['#FFF9CC', '#E2C23B'];
+const startPosition = { x: 0, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 const borderColor = '#E6CE67';
 
 const STATES = {
@@ -124,7 +124,7 @@ const TellBullJokeScreen = () => {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{
           alignItems: 'center',
@@ -194,7 +194,7 @@ const TellBullJokeScreen = () => {
 
         {bottomButton()}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 

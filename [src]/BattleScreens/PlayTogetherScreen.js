@@ -20,9 +20,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
-const endPosition = { x: 1, y: 0 };
+const goldGradient = ['#FFF9CC', '#E2C23B'];
+const startPosition = { x: 0, y: 0 };
+const endPosition = { x: 0, y: 1.2 };
 const borderColor = '#E6CE67';
 const addButton = require('../assets/images/addButton.png');
 
@@ -142,7 +142,7 @@ const PlayTogetherScreen = () => {
 
   if (stage === STAGES.ENTER) {
     return (
-      <View style={{ flex: 1, backgroundColor: bgColor }}>
+      <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
         >
@@ -252,7 +252,7 @@ const PlayTogetherScreen = () => {
             </View>
           </Modal>
         </ScrollView>
-      </View>
+      </LinearGradient>
     );
   }
 
@@ -260,7 +260,7 @@ const PlayTogetherScreen = () => {
     const player = players[current];
 
     return (
-      <View style={{ flex: 1, backgroundColor: bgColor }}>
+      <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
         >
@@ -317,7 +317,7 @@ const PlayTogetherScreen = () => {
             </LinearGradient>
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </LinearGradient>
     );
   }
 
@@ -325,7 +325,7 @@ const PlayTogetherScreen = () => {
     const voter = players[votingPlayer];
 
     return (
-      <View style={{ flex: 1, backgroundColor: bgColor }}>
+      <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
         >
@@ -378,12 +378,12 @@ const PlayTogetherScreen = () => {
             </LinearGradient>
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </LinearGradient>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: bgColor }}>
+    <LinearGradient colors={['#0b0525ff', '#000000ff']} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
       >
@@ -415,7 +415,7 @@ const PlayTogetherScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
