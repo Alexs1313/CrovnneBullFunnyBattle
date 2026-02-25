@@ -1,9 +1,9 @@
 export const jokesCategories = [
   {
     id: 'friendly',
-    title: require('../assets/images/FriendlyBull.png'),
+    title: require('./[src]/assets/images/FriendlyBull.png'),
     description: 'Good, light, universal jokes',
-    image: require('../assets/images/friendly_bull.png'),
+    image: require('./[src]/assets/images/friendly_bull.png'),
     jokes: [
       "I'm not fat - I'm just a bull with a big soul.",
       'Smile, even if the horns are not symmetrical.',
@@ -30,9 +30,9 @@ export const jokesCategories = [
 
   {
     id: 'savage',
-    title: require('../assets/images/SavageBull.png'),
+    title: require('./[src]/assets/images/SavageBull.png'),
     description: 'Harsh, with jokes, but without toxicity',
-    image: require('../assets/images/savage_bull.png'),
+    image: require('./[src]/assets/images/savage_bull.png'),
     jokes: [
       "I'm not angry - it's just that the truth hurts.",
       "Your joke was so weak that even I didn't get angry.",
@@ -59,9 +59,9 @@ export const jokesCategories = [
 
   {
     id: 'smart',
-    title: require('../assets/images/SmartBull.png'),
+    title: require('./[src]/assets/images/SmartBull.png'),
     description: 'Smart, ironic, a little sarcastic',
-    image: require('../assets/images/smart_bull.png'),
+    image: require('./[src]/assets/images/smart_bull.png'),
     jokes: [
       "It was a joke with subtext. Too bad there's no text.",
       'I laugh logically.',

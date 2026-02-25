@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   StyleSheet,
@@ -21,10 +22,104 @@ import LinearGradient from 'react-native-linear-gradient';
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
 const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 2 };
+const startPosition = { x: 0, y: 0 };
 const endPosition = { x: 1, y: 0 };
 const borderColor = '#E6CE67';
 const addButton = require('../assets/images/addButton.png');
+
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
+
+const ScaleTouchable = ({
+  children,
+  style,
+  disabled,
+  onPress,
+  onPressIn,
+  onPressOut,
+  ...props
+}) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const shakeX = useRef(new Animated.Value(0)).current;
+
+  const runDisabledShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeX, {
+        toValue: -6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: -4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 0,
+        duration: 25,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handlePressIn = event => {
+    if (disabled) {
+      runDisabledShake();
+    } else {
+      Animated.spring(scale, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }).start();
+    }
+
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = event => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+
+    onPressOut?.(event);
+  };
+
+  const handlePress = event => {
+    if (disabled) {
+      runDisabledShake();
+      return;
+    }
+
+    onPress?.(event);
+  };
+
+  return (
+    <AnimatedTouchableOpacity
+      {...props}
+      style={[style, { transform: [{ translateX: shakeX }, { scale }] }]}
+      activeOpacity={1}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      {children}
+    </AnimatedTouchableOpacity>
+  );
+};
 
 // avatars / winner skins
 
@@ -54,6 +149,9 @@ const STAGES = {
 const PlayTogetherScreen = () => {
   const navigation = useNavigation();
   const { height } = useWindowDimensions();
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
+  const missingProfileShake = useRef(new Animated.Value(0)).current;
   const [stage, setStage] = useState(STAGES.ENTER);
   const [players, setPlayers] = useState([
     { name: '', avatarId: null, joke: '', votes: 0 },
@@ -64,6 +162,21 @@ const PlayTogetherScreen = () => {
   const [votingPlayer, setVotingPlayer] = useState(0);
   const [selectedVote, setSelectedVote] = useState(null);
 
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [screenOpacity, screenTranslateY]);
+
   const usedAvatars = players.map(p => p.avatarId).filter(v => v !== null);
 
   const winner = [...players].sort((a, b) => b.votes - a.votes)[0];
@@ -72,12 +185,43 @@ const PlayTogetherScreen = () => {
 
   const canShowStart = players.length >= 2 && players.every(p => p.name.trim());
 
+  const runMissingProfileShake = () => {
+    Animated.sequence([
+      Animated.timing(missingProfileShake, {
+        toValue: -7,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(missingProfileShake, {
+        toValue: 7,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(missingProfileShake, {
+        toValue: -5,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(missingProfileShake, {
+        toValue: 5,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(missingProfileShake, {
+        toValue: 0,
+        duration: 25,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   const handleStart = () => {
     const allPlayersHaveAvatars = players.every(
       player => player.avatarId !== null,
     );
 
     if (!allPlayersHaveAvatars) {
+      runMissingProfileShake();
       Alert.alert(
         'Choose profile',
         'Each player must choose an profile before starting the game.',
@@ -114,19 +258,22 @@ const PlayTogetherScreen = () => {
 
   const BattleHeader = () => (
     <View style={[styles.header]}>
-      <TouchableOpacity
+      <ScaleTouchable
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
         <Image source={require('../assets/icons/back_arrow.png')} />
-      </TouchableOpacity>
+      </ScaleTouchable>
 
       <Text style={styles.headerTitle}>Play together</Text>
 
       {Platform.OS === 'ios' ? (
         <Image
-          source={require('../assets/images/app_icon.png')}
-          style={styles.appIcon}
+          source={require('../assets/images/about_logo.png')}
+          style={[
+            styles.appIcon,
+            { borderRadius: 12, borderWidth: 0.8, borderColor: '#E6CE67' },
+          ]}
         />
       ) : (
         <Image
@@ -143,115 +290,142 @@ const PlayTogetherScreen = () => {
   if (stage === STAGES.ENTER) {
     return (
       <View style={{ flex: 1, backgroundColor: bgColor }}>
-        <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        <Animated.View
+          style={{
+            flex: 1,
+            opacity: screenOpacity,
+            transform: [{ translateY: screenTranslateY }],
+          }}
         >
-          <BattleHeader />
-          <Text style={styles.title}>Enter data</Text>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scroll,
+              { paddingTop: height * 0.07 },
+            ]}
+          >
+            <BattleHeader />
+            <Text style={styles.title}>Enter data</Text>
 
-          {players.map((p, i) => (
-            <View key={i} style={styles.playerRow}>
-              <TouchableOpacity
-                style={styles.avatarBox}
-                onPress={() => setAvatarPickerFor(i)}
-              >
-                {p.avatarId !== null ? (
-                  <Image
-                    source={AVATARS[p.avatarId].image}
-                    style={{ width: 29, height: 49, resizeMode: 'contain' }}
-                  />
-                ) : (
-                  <Image source={require('../assets/icons/user_icon.png')} />
-                )}
-              </TouchableOpacity>
-
-              <TextInput
-                placeholder={`Player ${i + 1}`}
-                placeholderTextColor="#FFFFFF"
-                style={styles.input}
-                maxLength={14}
-                value={p.name}
-                onChangeText={t => {
-                  const copy = [...players];
-                  copy[i].name = t;
-                  setPlayers(copy);
-                }}
-              />
-            </View>
-          ))}
-
-          {players.length < 5 && (
-            <TouchableOpacity
-              style={{ marginTop: height * 0.03 }}
-              onPress={() =>
-                setPlayers([
-                  ...players,
-                  { name: '', avatarId: null, joke: '', votes: 0 },
-                ])
-              }
-            >
-              <Image source={addButton} />
-            </TouchableOpacity>
-          )}
-          {canShowStart && (
-            <TouchableOpacity
-              onPress={handleStart}
-              activeOpacity={0.7}
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                marginTop: height * 0.05,
-              }}
-            >
-              <LinearGradient colors={goldGradient} style={styles.mainButton}>
-                <Text style={styles.buttonText}>Start</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          )}
-
-          <Modal visible={avatarPickerFor !== null} transparent>
-            <View style={styles.modalBg}>
-              <View style={styles.modal}>
-                <Text style={styles.modalTitle}>Choose a profile</Text>
-
-                <View style={styles.avatarGrid}>
-                  {AVATARS.map(a => {
-                    const isUsed = usedAvatars.includes(a.id);
-
-                    return (
-                      <TouchableOpacity
-                        key={a.id}
-                        disabled={isUsed}
-                        style={[
-                          styles.avatarPick,
-                          isUsed && styles.avatarDisabled,
-                        ]}
-                        onPress={() => {
-                          const copy = [...players];
-                          copy[avatarPickerFor].avatarId = a.id;
-                          setPlayers(copy);
-                          setAvatarPickerFor(null);
-                        }}
-                      >
-                        <Image
-                          source={a.image}
-                          style={{ opacity: isUsed ? 0.4 : 1 }}
-                        />
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.close}
-                  onPress={() => setAvatarPickerFor(null)}
+            {players.map((p, i) => (
+              <View key={i} style={styles.playerRow}>
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        translateX:
+                          p.avatarId === null ? missingProfileShake : 0,
+                      },
+                    ],
+                  }}
                 >
-                  <Image source={require('../assets/icons/close.png')} />
-                </TouchableOpacity>
+                  <ScaleTouchable
+                    style={styles.avatarBox}
+                    onPress={() => setAvatarPickerFor(i)}
+                  >
+                    {p.avatarId !== null ? (
+                      <Image
+                        source={AVATARS[p.avatarId].image}
+                        style={{ width: 29, height: 49, resizeMode: 'contain' }}
+                      />
+                    ) : (
+                      <Image source={require('../assets/icons/user_icon.png')} />
+                    )}
+                  </ScaleTouchable>
+                </Animated.View>
+
+                <TextInput
+                  placeholder={`Player ${i + 1}`}
+                  placeholderTextColor="#FFFFFF"
+                  style={styles.input}
+                  maxLength={14}
+                  value={p.name}
+                  onChangeText={t => {
+                    const copy = [...players];
+                    copy[i].name = t;
+                    setPlayers(copy);
+                  }}
+                />
               </View>
-            </View>
-          </Modal>
-        </ScrollView>
+            ))}
+
+            {players.length < 5 && (
+              <ScaleTouchable
+                style={{ marginTop: height * 0.03 }}
+                onPress={() =>
+                  setPlayers([
+                    ...players,
+                    { name: '', avatarId: null, joke: '', votes: 0 },
+                  ])
+                }
+              >
+                <Image source={addButton} />
+              </ScaleTouchable>
+            )}
+            {canShowStart && (
+              <ScaleTouchable
+                onPress={handleStart}
+                activeOpacity={0.7}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  marginTop: height * 0.05,
+                }}
+              >
+                <LinearGradient
+                  colors={goldGradient}
+                  style={styles.mainButton}
+                  start={startPosition}
+                  end={endPosition}
+                >
+                  <Text style={styles.buttonText}>Start</Text>
+                </LinearGradient>
+              </ScaleTouchable>
+            )}
+
+            <Modal visible={avatarPickerFor !== null} transparent>
+              <View style={styles.modalBg}>
+                <View style={styles.modal}>
+                  <Text style={styles.modalTitle}>Choose a profile</Text>
+
+                  <View style={styles.avatarGrid}>
+                    {AVATARS.map(a => {
+                      const isUsed = usedAvatars.includes(a.id);
+
+                      return (
+                        <ScaleTouchable
+                          key={a.id}
+                          disabled={isUsed}
+                          style={[
+                            styles.avatarPick,
+                            isUsed && styles.avatarDisabled,
+                          ]}
+                          onPress={() => {
+                            const copy = [...players];
+                            copy[avatarPickerFor].avatarId = a.id;
+                            setPlayers(copy);
+                            setAvatarPickerFor(null);
+                          }}
+                        >
+                          <Image
+                            source={a.image}
+                            style={{ opacity: isUsed ? 0.4 : 1 }}
+                          />
+                        </ScaleTouchable>
+                      );
+                    })}
+                  </View>
+
+                  <ScaleTouchable
+                    style={styles.close}
+                    onPress={() => setAvatarPickerFor(null)}
+                  >
+                    <Image source={require('../assets/icons/close.png')} />
+                  </ScaleTouchable>
+                </View>
+              </View>
+            </Modal>
+          </ScrollView>
+        </Animated.View>
       </View>
     );
   }
@@ -261,62 +435,73 @@ const PlayTogetherScreen = () => {
 
     return (
       <View style={{ flex: 1, backgroundColor: bgColor }}>
-        <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        <Animated.View
+          style={{
+            flex: 1,
+            opacity: screenOpacity,
+            transform: [{ translateY: screenTranslateY }],
+          }}
         >
-          <BattleHeader />
-          <Text style={styles.title}>Player's move</Text>
-
-          <View style={styles.currentPlayer}>
-            <View style={styles.avatarMoveBox}>
-              <Image
-                source={AVATARS[player.avatarId].image}
-                style={styles.avatarVoteBox}
-              />
-            </View>
-            <View style={styles.playerNameBox}>
-              <Text style={styles.playerName}>{player.name}</Text>
-            </View>
-          </View>
-
-          <TextInput
-            multiline
-            placeholder="Write a joke"
-            placeholderTextColor="#FFFFFF"
-            style={styles.jokeInput}
-            textAlignVertical="top"
-            value={player.joke}
-            onChangeText={t => {
-              const copy = [...players];
-              copy[current].joke = t;
-              setPlayers(copy);
-            }}
-          />
-
-          <TouchableOpacity
-            style={{ width: '100%', alignItems: 'center' }}
-            activeOpacity={0.7}
-            disabled={!player.joke.trim()}
-            onPress={() => {
-              if (current < players.length - 1) {
-                setCurrent(c => c + 1);
-              } else {
-                setStage(STAGES.VOTING);
-              }
-            }}
+          <ScrollView
+            contentContainerStyle={[
+              styles.scroll,
+              { paddingTop: height * 0.07 },
+            ]}
           >
-            <LinearGradient
-              colors={goldGradient}
-              style={styles.mainButton}
-              start={startPosition}
-              end={endPosition}
+            <BattleHeader />
+            <Text style={styles.title}>Player's move</Text>
+
+            <View style={styles.currentPlayer}>
+              <View style={styles.avatarMoveBox}>
+                <Image
+                  source={AVATARS[player.avatarId].image}
+                  style={styles.avatarVoteBox}
+                />
+              </View>
+              <View style={styles.playerNameBox}>
+                <Text style={styles.playerName}>{player.name}</Text>
+              </View>
+            </View>
+
+            <TextInput
+              multiline
+              placeholder="Write a joke"
+              placeholderTextColor="#FFFFFF"
+              style={styles.jokeInput}
+              textAlignVertical="top"
+              value={player.joke}
+              onChangeText={t => {
+                const copy = [...players];
+                copy[current].joke = t;
+                setPlayers(copy);
+              }}
+            />
+
+            <ScaleTouchable
+              style={{ width: '100%', alignItems: 'center' }}
+              activeOpacity={0.7}
+              disabled={!player.joke.trim()}
+              onPress={() => {
+                if (current < players.length - 1) {
+                  setCurrent(c => c + 1);
+                } else {
+                  setStage(STAGES.VOTING);
+                }
+              }}
             >
-              <Text style={styles.buttonText}>
-                {current === players.length - 1 ? 'Voting' : 'Next player'}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </ScrollView>
+              <LinearGradient
+                colors={goldGradient}
+                style={styles.mainButton}
+                start={startPosition}
+                end={endPosition}
+              >
+                <Text style={styles.buttonText}>
+                  {current === players.length - 1 ? 'Voting' : 'Next player'}
+                </Text>
+              </LinearGradient>
+            </ScaleTouchable>
+          </ScrollView>
+        </Animated.View>
       </View>
     );
   }
@@ -326,95 +511,114 @@ const PlayTogetherScreen = () => {
 
     return (
       <View style={{ flex: 1, backgroundColor: bgColor }}>
-        <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        <Animated.View
+          style={{
+            flex: 1,
+            opacity: screenOpacity,
+            transform: [{ translateY: screenTranslateY }],
+          }}
         >
-          <BattleHeader />
-          <Text style={styles.title}>Player votes:</Text>
-
-          <View style={styles.currentPlayer}>
-            <View style={styles.avatarMoveBox}>
-              <Image
-                source={AVATARS[voter.avatarId].image}
-                style={styles.avatarVoteBox}
-              />
-            </View>
-            <View style={styles.playerNameBox}>
-              <Text style={styles.playerName}>{voter.name}</Text>
-            </View>
-          </View>
-
-          <View style={styles.grid}>
-            {players.map((p, i) => (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                key={i}
-                style={[
-                  styles.voteCard,
-                  selectedVote === i && styles.voteSelected,
-                ]}
-                onPress={() => setSelectedVote(i)}
-              >
-                <Text style={styles.voteText}>{p.joke}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <TouchableOpacity
-            style={{ width: '100%', alignItems: 'center', marginTop: 30 }}
-            activeOpacity={0.7}
-            disabled={selectedVote === null}
-            onPress={() => {
-              handleVote();
-            }}
+          <ScrollView
+            contentContainerStyle={[
+              styles.scroll,
+              { paddingTop: height * 0.07 },
+            ]}
           >
-            <LinearGradient
-              colors={goldGradient}
-              style={styles.mainButton}
-              start={startPosition}
-              end={endPosition}
+            <BattleHeader />
+            <Text style={styles.title}>Player votes:</Text>
+
+            <View style={styles.currentPlayer}>
+              <View style={styles.avatarMoveBox}>
+                <Image
+                  source={AVATARS[voter.avatarId].image}
+                  style={styles.avatarVoteBox}
+                />
+              </View>
+              <View style={styles.playerNameBox}>
+                <Text style={styles.playerName}>{voter.name}</Text>
+              </View>
+            </View>
+
+            <View style={styles.grid}>
+              {players.map((p, i) => (
+                <ScaleTouchable
+                  activeOpacity={0.7}
+                  key={i}
+                  style={[
+                    styles.voteCard,
+                    selectedVote === i && styles.voteSelected,
+                  ]}
+                  onPress={() => setSelectedVote(i)}
+                >
+                  <Text style={styles.voteText}>{p.joke}</Text>
+                </ScaleTouchable>
+              ))}
+            </View>
+
+            <ScaleTouchable
+              style={{ width: '100%', alignItems: 'center', marginTop: 30 }}
+              activeOpacity={0.7}
+              disabled={selectedVote === null}
+              onPress={() => {
+                handleVote();
+              }}
             >
-              <Text style={styles.buttonText}>Vote</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </ScrollView>
+              <LinearGradient
+                colors={goldGradient}
+                style={styles.mainButton}
+                start={startPosition}
+                end={endPosition}
+              >
+                <Text style={styles.buttonText}>Vote</Text>
+              </LinearGradient>
+            </ScaleTouchable>
+          </ScrollView>
+        </Animated.View>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>
-      <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
+        }}
       >
-        <BattleHeader />
+        <ScrollView
+          contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        >
+          <BattleHeader />
 
-        <Image source={require('../assets/images/winner_text.png')} />
-        <View style={styles.winnerWrapper}>
-          <Text style={styles.playerName}>{winner.name}</Text>
-          <View style={styles.winnerCard}>
-            <Text style={styles.voteText}>{winner.joke}</Text>
+          <Image source={require('../assets/images/winner_text.png')} />
+          <View style={styles.winnerWrapper}>
+            <Text style={styles.playerName}>{winner.name}</Text>
+            <View style={styles.winnerCard}>
+              <Text style={styles.voteText}>{winner.joke}</Text>
+            </View>
           </View>
-        </View>
 
-        <Image source={winnerSkin} style={styles.winnerBull} />
-        <View style={styles.sharePosition}>
-          <TouchableOpacity
-            style={{ width: '100%', alignItems: 'center' }}
-            activeOpacity={0.7}
-            onPress={() => handleShareResult()}
-          >
-            <LinearGradient
-              colors={goldGradient}
-              style={styles.mainButton}
-              start={startPosition}
-              end={endPosition}
+          <Image source={winnerSkin} style={styles.winnerBull} />
+          <View style={styles.sharePosition}>
+            <ScaleTouchable
+              style={{ width: '100%', alignItems: 'center' }}
+              activeOpacity={0.7}
+              onPress={() => handleShareResult()}
             >
-              <Text style={styles.buttonText}>Share</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+              <LinearGradient
+                colors={goldGradient}
+                style={styles.mainButton}
+                start={startPosition}
+                end={endPosition}
+              >
+                <Text style={styles.buttonText}>Share</Text>
+              </LinearGradient>
+            </ScaleTouchable>
+          </View>
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };

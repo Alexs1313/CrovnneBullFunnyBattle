@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import {
+  Animated,
   View,
   StyleSheet,
   Image,
@@ -13,11 +14,28 @@ import { useNavigation } from '@react-navigation/native';
 import { bullFunnyHtmlLoader } from '../Constants/bullFunnyHtmlLoader';
 
 const bgColor = '#000';
-const logo = require('../assets/images/loade_lLogo.png');
+const logo = require('../assets/images/about_logo.png');
 
 const WelcomeLoader = () => {
   const nav = useNavigation();
   const timerRef = useRef(null);
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [screenOpacity, screenTranslateY]);
 
   useEffect(() => {
     timerRef.current = setTimeout(() => {
@@ -46,47 +64,58 @@ const WelcomeLoader = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
+        }}
       >
-        <View style={sty.loaderContainer} accessibilityLabel="loader-screen">
-          <ImageBackground
-            source={require('../assets/images/back_blur.png')}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={sty.loaderContainer} accessibilityLabel="loader-screen">
+            <ImageBackground
+              source={require('../assets/images/back_blur.png')}
+              style={{
+                width: 400,
+                height: 400,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {Platform.OS === 'ios' ? (
+                <Image
+                  source={logo}
+                  style={{ width: 250, height: 250, borderRadius: 42 }}
+                />
+              ) : (
+                <Image
+                  source={require('../assets/images/icon.png')}
+                  style={{ width: 250, height: 250, borderRadius: 42 }}
+                />
+              )}
+            </ImageBackground>
+          </View>
+
+          <View
             style={{
-              width: 400,
-              height: 400,
-              justifyContent: 'center',
-              alignItems: 'center',
+              flex: 1,
+              position: 'absolute',
+              bottom: 20,
+              alignSelf: 'center',
             }}
           >
-            {Platform.OS === 'ios' ? (
-              <Image source={logo} />
-            ) : (
-              <Image
-                source={require('../assets/images/icon.png')}
-                style={{ width: 250, height: 250, borderRadius: 42 }}
-              />
-            )}
-          </ImageBackground>
-        </View>
-
-        <View
-          style={{
-            flex: 1,
-            position: 'absolute',
-            bottom: 20,
-            alignSelf: 'center',
-          }}
-        >
-          <WebView
-            originWhitelist={['*']}
-            source={{ html: bullFunnyHtmlLoader }}
-            style={sty.webView}
-            scrollEnabled={false}
-          />
-        </View>
-      </ScrollView>
+            <WebView
+              originWhitelist={['*']}
+              source={{ html: bullFunnyHtmlLoader }}
+              style={sty.webView}
+              scrollEnabled={false}
+            />
+          </View>
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };

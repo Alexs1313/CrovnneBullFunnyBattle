@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   StyleSheet,
@@ -15,7 +16,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { jokesCategories } from '../BattleData/jokesCategories';
+import { jokesCategories } from '../../jokesCategories';
 
 const regFont = 'OrelegaOne-Regular';
 const bgColor = '#000';
@@ -24,12 +25,123 @@ const startPosition = { x: 0, y: 2 };
 const endPosition = { x: 1, y: 0 };
 const borderColor = '#E6CE67';
 
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
+
+const ScaleTouchable = ({
+  children,
+  style,
+  disabled,
+  onPress,
+  onPressIn,
+  onPressOut,
+  ...props
+}) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const shakeX = useRef(new Animated.Value(0)).current;
+
+  const runDisabledShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeX, {
+        toValue: -6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: -4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 0,
+        duration: 25,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handlePressIn = event => {
+    if (disabled) {
+      runDisabledShake();
+    } else {
+      Animated.spring(scale, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }).start();
+    }
+
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = event => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+
+    onPressOut?.(event);
+  };
+
+  const handlePress = event => {
+    if (disabled) {
+      runDisabledShake();
+      return;
+    }
+
+    onPress?.(event);
+  };
+
+  return (
+    <AnimatedTouchableOpacity
+      {...props}
+      style={[style, { transform: [{ translateX: shakeX }, { scale }] }]}
+      activeOpacity={1}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      {children}
+    </AnimatedTouchableOpacity>
+  );
+};
+
 const SelectionOfJokesScreen = () => {
   const navigation = useNavigation();
   const [isSaved, setIsSaved] = useState(false);
   const [index, setIndex] = useState(0);
   const [selectedJoke, setSelectedJoke] = useState(null);
   const { height } = useWindowDimensions();
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [screenOpacity, screenTranslateY]);
 
   const category = jokesCategories[index];
 
@@ -90,127 +202,142 @@ const SelectionOfJokesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
+        }}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Image source={require('../assets/icons/back_arrow.png')} />
-          </TouchableOpacity>
+        <ScrollView
+          contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        >
+          <View style={styles.header}>
+            <ScaleTouchable
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Image source={require('../assets/icons/back_arrow.png')} />
+            </ScaleTouchable>
 
-          <Text style={styles.headerTitle}>Selection of jokes</Text>
+            <Text style={styles.headerTitle}>Selection of jokes</Text>
 
-          {Platform.OS === 'ios' ? (
-            <Image
-              source={require('../assets/images/app_icon.png')}
-              style={styles.appIcon}
-            />
+            {Platform.OS === 'ios' ? (
+              <Image
+                source={require('../assets/images/about_logo.png')}
+                style={[
+                  styles.appIcon,
+                  {
+                    borderRadius: 12,
+                    borderWidth: 0.8,
+                    borderColor: '#E6CE67',
+                  },
+                ]}
+              />
+            ) : (
+              <Image
+                source={require('../assets/images/icon.png')}
+                style={[
+                  styles.appIcon,
+                  {
+                    borderRadius: 12,
+                    borderWidth: 0.8,
+                    borderColor: '#E6CE67',
+                  },
+                ]}
+              />
+            )}
+          </View>
+
+          {!selectedJoke ? (
+            <>
+              <Text style={[styles.topTitle, { marginTop: height * 0.04 }]}>
+                Choose a category
+              </Text>
+
+              <ImageBackground
+                source={require('../assets/images/back_blur.png')}
+                style={[styles.bullWrapper, { marginTop: height * 0.1 }]}
+              >
+                <Image source={category.image} />
+              </ImageBackground>
+
+              <Image source={category.title} style={{ marginTop: 20 }} />
+              <Text style={styles.description}>{category.description}</Text>
+
+              <View style={styles.bottomButtonsWrap}>
+                <ScaleTouchable style={styles.arrowButton} onPress={prevJoke}>
+                  <Image source={require('../assets/icons/back_arrow.png')} />
+                </ScaleTouchable>
+
+                <ScaleTouchable
+                  activeOpacity={0.7}
+                  onPress={chooseCategory}
+                  style={{ flex: 1 }}
+                >
+                  <LinearGradient
+                    colors={goldGradient}
+                    start={startPosition}
+                    end={endPosition}
+                    style={styles.chooseButton}
+                  >
+                    <Text style={styles.chooseText} onPress={chooseCategory}>
+                      Choose
+                    </Text>
+                  </LinearGradient>
+                </ScaleTouchable>
+
+                <ScaleTouchable style={styles.arrowButton} onPress={nextJoke}>
+                  <Image source={require('../assets/icons/arr_right.png')} />
+                </ScaleTouchable>
+              </View>
+            </>
           ) : (
-            <Image
-              source={require('../assets/images/icon.png')}
-              style={[
-                styles.appIcon,
-                {
-                  borderRadius: 12,
-                  borderWidth: 0.8,
-                  borderColor: '#E6CE67',
-                },
-              ]}
-            />
+            <>
+              <ImageBackground
+                source={require('../assets/images/back_blur.png')}
+                style={[styles.bullWrapper, { marginTop: height * 0.1 }]}
+              >
+                <Image source={category.image} />
+              </ImageBackground>
+
+              <Image source={category.title} style={{ marginTop: 30 }} />
+              <Text style={styles.jokeText}>{selectedJoke}</Text>
+
+              <View style={styles.bottomRow}>
+                <ScaleTouchable
+                  activeOpacity={0.7}
+                  style={{ width: '60%' }}
+                  onPress={() => Share.share({ message: selectedJoke })}
+                >
+                  <LinearGradient
+                    colors={goldGradient}
+                    start={startPosition}
+                    end={endPosition}
+                    style={styles.shareButton}
+                  >
+                    <Text style={styles.chooseText}>Share</Text>
+                  </LinearGradient>
+                </ScaleTouchable>
+
+                <ScaleTouchable
+                  style={styles.saveIconButton}
+                  onPress={toggleSaveJoke}
+                  activeOpacity={0.7}
+                >
+                  {isSaved ? (
+                    <Image
+                      source={require('../assets/icons/bookmark_saved.png')}
+                    />
+                  ) : (
+                    <Image source={require('../assets/icons/bookmark.png')} />
+                  )}
+                </ScaleTouchable>
+              </View>
+            </>
           )}
-        </View>
-
-        {!selectedJoke ? (
-          <>
-            <Text style={[styles.topTitle, { marginTop: height * 0.04 }]}>
-              Choose a category
-            </Text>
-
-            <ImageBackground
-              source={require('../assets/images/back_blur.png')}
-              style={[styles.bullWrapper, { marginTop: height * 0.1 }]}
-            >
-              <Image source={category.image} />
-            </ImageBackground>
-
-            <Image source={category.title} style={{ marginTop: 20 }} />
-            <Text style={styles.description}>{category.description}</Text>
-
-            <View style={styles.bottomButtonsWrap}>
-              <TouchableOpacity style={styles.arrowButton} onPress={prevJoke}>
-                <Image source={require('../assets/icons/back_arrow.png')} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={chooseCategory}
-                style={{ flex: 1 }}
-              >
-                <LinearGradient
-                  colors={goldGradient}
-                  start={startPosition}
-                  end={endPosition}
-                  style={styles.chooseButton}
-                >
-                  <Text style={styles.chooseText} onPress={chooseCategory}>
-                    Choose
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.arrowButton} onPress={nextJoke}>
-                <Image source={require('../assets/icons/arr_right.png')} />
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <>
-            <ImageBackground
-              source={require('../assets/images/back_blur.png')}
-              style={[styles.bullWrapper, { marginTop: height * 0.1 }]}
-            >
-              <Image source={category.image} />
-            </ImageBackground>
-
-            <Image source={category.title} style={{ marginTop: 30 }} />
-            <Text style={styles.jokeText}>{selectedJoke}</Text>
-
-            <View style={styles.bottomRow}>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={{ width: '60%' }}
-                onPress={() => Share.share({ message: selectedJoke })}
-              >
-                <LinearGradient
-                  colors={goldGradient}
-                  start={startPosition}
-                  end={endPosition}
-                  style={styles.shareButton}
-                >
-                  <Text style={styles.chooseText}>Share</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.saveIconButton}
-                onPress={toggleSaveJoke}
-                activeOpacity={0.7}
-              >
-                {isSaved ? (
-                  <Image
-                    source={require('../assets/icons/bookmark_saved.png')}
-                  />
-                ) : (
-                  <Image source={require('../assets/icons/bookmark.png')} />
-                )}
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-      </ScrollView>
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };

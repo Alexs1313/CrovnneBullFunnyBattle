@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 
+import React, { useEffect, useRef } from 'react';
 import {
+  Animated,
   Image,
   ImageBackground,
   Platform,
@@ -19,8 +21,140 @@ const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
 const startPosition = { x: 0, y: 2 };
 const endPosition = { x: 1, y: 0 };
 
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
+
+const ScaleTouchable = ({
+  children,
+  style,
+  disabled,
+  onPress,
+  onPressIn,
+  onPressOut,
+  ...props
+}) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const shakeX = useRef(new Animated.Value(0)).current;
+
+  const runDisabledShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeX, { toValue: -6, duration: 35, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 6, duration: 35, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: -4, duration: 30, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 4, duration: 30, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 0, duration: 25, useNativeDriver: true }),
+    ]).start();
+  };
+
+  const handlePressIn = event => {
+    if (disabled) {
+      runDisabledShake();
+    } else {
+      Animated.spring(scale, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }).start();
+    }
+
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = event => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+
+    onPressOut?.(event);
+  };
+
+  const handlePress = event => {
+    if (disabled) {
+      runDisabledShake();
+      return;
+    }
+
+    onPress?.(event);
+  };
+
+  return (
+    <AnimatedTouchableOpacity
+      {...props}
+      style={[style, { transform: [{ translateX: shakeX }, { scale }] }]}
+      activeOpacity={1}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      {children}
+    </AnimatedTouchableOpacity>
+  );
+};
+
 const FunnyBattleMenu = () => {
   const navigation = useNavigation();
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
+  const iconOpacity = useRef(new Animated.Value(0)).current;
+  const iconScale = useRef(new Animated.Value(0.92)).current;
+  const iconTranslateY = useRef(new Animated.Value(10)).current;
+  const buttonsOpacity = useRef(new Animated.Value(0)).current;
+  const buttonsTranslateY = useRef(new Animated.Value(14)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(iconOpacity, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.spring(iconScale, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 14,
+        bounciness: 7,
+      }),
+      Animated.timing(iconTranslateY, {
+        toValue: 0,
+        duration: 360,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonsOpacity, {
+        toValue: 1,
+        duration: 350,
+        delay: 120,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonsTranslateY, {
+        toValue: 0,
+        duration: 350,
+        delay: 120,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [
+    buttonsOpacity,
+    buttonsTranslateY,
+    iconOpacity,
+    iconScale,
+    iconTranslateY,
+    screenOpacity,
+    screenTranslateY,
+  ]);
 
   const handleNavigateTo = selectedScreen => {
     navigation.navigate(selectedScreen);
@@ -28,70 +162,98 @@ const FunnyBattleMenu = () => {
 
   return (
     <View style={[s.mainContainer]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={s.scrollContainer}
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
+        }}
       >
-        <ImageBackground
-          source={require('../assets/images/back_blur.png')}
-          style={s.backgroundBlur}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={s.scrollContainer}
         >
-          {Platform.OS === 'ios' ? (
-            <Image source={require('../assets/images/menu_logo.png')} />
-          ) : (
-            <Image
-              source={require('../assets/images/icon.png')}
-              style={{ width: 230, height: 230, borderRadius: 22 }}
-            />
-          )}
-        </ImageBackground>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          style={{ width: '90%' }}
-          onPress={() => handleNavigateTo('PlayTogetherScreen')}
+        <Animated.View
+          style={{
+            opacity: iconOpacity,
+            transform: [{ translateY: iconTranslateY }, { scale: iconScale }],
+          }}
         >
-          <LinearGradient
-            colors={goldGradient}
-            style={s.primaryButton}
-            start={startPosition}
-            end={endPosition}
+          <ImageBackground
+            source={require('../assets/images/back_blur.png')}
+            style={s.backgroundBlur}
           >
-            <Text style={s.buttonText}>Play together</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            {Platform.OS === 'ios' ? (
+              <Image
+                source={require('../assets/images/about_logo.png')}
+                style={{ width: 230, height: 230, borderRadius: 42 }}
+              />
+            ) : (
+              <Image
+                source={require('../assets/images/icon.png')}
+                style={{ width: 230, height: 230, borderRadius: 22 }}
+              />
+            )}
+          </ImageBackground>
+        </Animated.View>
 
-        <TouchableOpacity
-          style={s.secondaryButton}
-          onPress={() => handleNavigateTo('TellBullJokeScreen')}
-          activeOpacity={0.6}
+        <Animated.View
+          style={{
+            opacity: buttonsOpacity,
+            transform: [{ translateY: buttonsTranslateY }],
+            width: '100%',
+            alignItems: 'center',
+          }}
         >
-          <Text style={s.challengeButtonText}>Tell a joke</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={s.secondaryButton}
-          onPress={() => handleNavigateTo('SelectionOfJokesScreen')}
-          activeOpacity={0.6}
-        >
-          <Text style={s.challengeButtonText}>Selection of jokes</Text>
-        </TouchableOpacity>
+          <ScaleTouchable
+            activeOpacity={0.6}
+            style={{ width: '90%' }}
+            onPress={() => handleNavigateTo('PlayTogetherScreen')}
+          >
+            <LinearGradient
+              colors={goldGradient}
+              style={s.primaryButton}
+              start={startPosition}
+              end={endPosition}
+            >
+              <Text style={s.buttonText}>Play together</Text>
+            </LinearGradient>
+          </ScaleTouchable>
 
-        <View style={{ flexDirection: 'row', gap: 20 }}>
-          <TouchableOpacity
-            style={s.detailsButton}
-            onPress={() => handleNavigateTo('SavedJokesScreen')}
+          <ScaleTouchable
+            style={s.secondaryButton}
+            onPress={() => handleNavigateTo('TellBullJokeScreen')}
             activeOpacity={0.6}
           >
-            <Image source={require('../assets/icons/stash_save-ribbon.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={s.detailsButton}
-            onPress={() => handleNavigateTo('AboutBullScreen')}
+            <Text style={s.challengeButtonText}>Tell a joke</Text>
+          </ScaleTouchable>
+          <ScaleTouchable
+            style={s.secondaryButton}
+            onPress={() => handleNavigateTo('SelectionOfJokesScreen')}
             activeOpacity={0.6}
           >
-            <Image source={require('../assets/icons/m_about.png')} />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <Text style={s.challengeButtonText}>Selection of jokes</Text>
+          </ScaleTouchable>
+
+          <View style={{ flexDirection: 'row', gap: 20 }}>
+            <ScaleTouchable
+              style={s.detailsButton}
+              onPress={() => handleNavigateTo('SavedJokesScreen')}
+              activeOpacity={0.6}
+            >
+              <Image source={require('../assets/icons/stash_save-ribbon.png')} />
+            </ScaleTouchable>
+            <ScaleTouchable
+              style={s.detailsButton}
+              onPress={() => handleNavigateTo('AboutBullScreen')}
+              activeOpacity={0.6}
+            >
+              <Image source={require('../assets/icons/m_about.png')} />
+            </ScaleTouchable>
+          </View>
+        </Animated.View>
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };

@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   StyleSheet,
@@ -21,6 +22,71 @@ const startPosition = { x: 0, y: 2 };
 const endPosition = { x: 1, y: 0 };
 const borderColor = '#E6CE67';
 
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+
+const ScaleTouchable = ({ children, style, disabled, onPress, onPressIn, onPressOut, ...props }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const shakeX = useRef(new Animated.Value(0)).current;
+
+  const runDisabledShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeX, { toValue: -6, duration: 35, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 6, duration: 35, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: -4, duration: 30, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 4, duration: 30, useNativeDriver: true }),
+      Animated.timing(shakeX, { toValue: 0, duration: 25, useNativeDriver: true }),
+    ]).start();
+  };
+
+  const handlePressIn = event => {
+    if (disabled) {
+      runDisabledShake();
+    } else {
+      Animated.spring(scale, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }).start();
+    }
+
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = event => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+
+    onPressOut?.(event);
+  };
+
+  const handlePress = event => {
+    if (disabled) {
+      runDisabledShake();
+      return;
+    }
+
+    onPress?.(event);
+  };
+
+  return (
+    <AnimatedTouchableOpacity
+      {...props}
+      style={[style, { transform: [{ translateX: shakeX }, { scale }] }]}
+      activeOpacity={1}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      {children}
+    </AnimatedTouchableOpacity>
+  );
+};
+
 const STATES = {
   IDLE: 'idle',
   RECORDING: 'recording',
@@ -34,6 +100,23 @@ const TellBullJokeScreen = () => {
   const [timerId, setTimerId] = useState(null);
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [screenOpacity, screenTranslateY]);
 
   const startRecording = () => {
     setState(STATES.RECORDING);
@@ -98,6 +181,7 @@ const TellBullJokeScreen = () => {
           text="Recording in progress..."
           onPress={() => setState(STATES.RESULT_GOOD)}
           disabled
+          pulse
         />
       );
     }
@@ -125,27 +209,38 @@ const TellBullJokeScreen = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: 'center',
-          flexGrow: 1,
-          paddingTop: height * 0.07,
-          paddingBottom: 30,
+      <Animated.View
+        style={{
+          flex: 1,
+          width: '100%',
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
         }}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: 'center',
+            flexGrow: 1,
+            paddingTop: height * 0.07,
+            paddingBottom: 30,
+          }}
+        >
+          <View style={styles.header}>
+          <ScaleTouchable
             style={styles.backButton}
             onPress={() => navigation.goBack()}
             activeOpacity={0.7}
           >
             <Image source={require('../assets/icons/back_arrow.png')} />
-          </TouchableOpacity>
+          </ScaleTouchable>
           <Text style={styles.headerTitle}>Tell a jokes</Text>
           {Platform.OS === 'ios' ? (
             <Image
-              source={require('../assets/images/app_icon.png')}
-              style={styles.appIcon}
+              source={require('../assets/images/about_logo.png')}
+              style={[
+                styles.appIcon,
+                { borderRadius: 12, borderWidth: 0.8, borderColor: '#E6CE67' },
+              ]}
             />
           ) : (
             <Image
@@ -192,32 +287,69 @@ const TellBullJokeScreen = () => {
           {resultText()}
         </Text>
 
-        {bottomButton()}
-      </ScrollView>
+          {bottomButton()}
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };
 
-const PrimaryButton = ({ text, onPress, disabled }) => (
-  <TouchableOpacity
-    activeOpacity={disabled ? 1 : 0.7}
-    onPress={disabled ? null : onPress}
-    style={{ marginTop: 30 }}
-  >
-    <LinearGradient
-      colors={goldGradient}
-      style={[styles.button]}
-      start={startPosition}
-      end={endPosition}
-    >
-      {text !== 'Share' && (
-        <Image source={require('../assets/icons/microphone.png')} />
-      )}
+const PrimaryButton = ({ text, onPress, disabled, pulse = false }) => {
+  const pulseScale = useRef(new Animated.Value(1)).current;
 
-      <Text style={styles.buttonText}>{text}</Text>
-    </LinearGradient>
-  </TouchableOpacity>
-);
+  useEffect(() => {
+    if (!pulse) {
+      pulseScale.setValue(1);
+      return undefined;
+    }
+
+    const pulseLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseScale, {
+          toValue: 0.96,
+          duration: 450,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseScale, {
+          toValue: 1,
+          duration: 450,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    pulseLoop.start();
+
+    return () => {
+      pulseLoop.stop();
+      pulseScale.setValue(1);
+    };
+  }, [pulse, pulseScale]);
+
+  return (
+    <ScaleTouchable
+      activeOpacity={disabled ? 1 : 0.7}
+      onPress={disabled ? null : onPress}
+      disabled={disabled}
+      style={{ marginTop: 30 }}
+    >
+      <Animated.View style={{ transform: [{ scale: pulseScale }] }}>
+        <LinearGradient
+          colors={goldGradient}
+          style={[styles.button]}
+          start={startPosition}
+          end={endPosition}
+        >
+          {text !== 'Share' && (
+            <Image source={require('../assets/icons/microphone.png')} />
+          )}
+
+          <Text style={styles.buttonText}>{text}</Text>
+        </LinearGradient>
+      </Animated.View>
+    </ScaleTouchable>
+  );
+};
 
 const styles = StyleSheet.create({
   mainContainer: {

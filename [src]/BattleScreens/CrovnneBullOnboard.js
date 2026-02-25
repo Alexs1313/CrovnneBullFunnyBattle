@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Image,
   ImageBackground,
   Platform,
@@ -30,11 +31,64 @@ const regFont = 'OrelegaOne-Regular';
 const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
 const startPosition = { x: 0, y: 2 };
 const endPosition = { x: 1, y: 0 };
+const onboardingDescriptions = [
+  'I’m a bull who knows a lot about jokes. Bad ones won’t pass. Good ones will be remembered.',
+  'Write a joke, read other people’s, vote honestly. Whoever gets the most votes wins. I’m all about fairness.',
+  'Write a joke with your voice — I’ll rate it. Choose your categories, save your favorites and come back when you need a laugh.',
+];
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
 
 const CrovnneBullOnboard = () => {
   const { height } = useWindowDimensions();
   const [onboardingStep, setOnboardingStep] = useState(0);
+  const [typedIntroText, setTypedIntroText] = useState('');
+  const buttonScale = useRef(new Animated.Value(1)).current;
+  const logoOpacity = useRef(new Animated.Value(1)).current;
+  const screenOpacity = useRef(new Animated.Value(0)).current;
+  const screenTranslateY = useRef(new Animated.Value(12)).current;
   const navigation = useNavigation();
+  const fullIntroText = onboardingDescriptions[onboardingStep];
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(screenTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [screenOpacity, screenTranslateY]);
+
+  useEffect(() => {
+    setTypedIntroText('');
+    let charIndex = 0;
+
+    const typingInterval = setInterval(() => {
+      charIndex += 1;
+      setTypedIntroText(fullIntroText.slice(0, charIndex));
+
+      if (charIndex >= fullIntroText.length) {
+        clearInterval(typingInterval);
+      }
+    }, 18);
+
+    return () => clearInterval(typingInterval);
+  }, [fullIntroText]);
+
+  useEffect(() => {
+    logoOpacity.setValue(0);
+    Animated.timing(logoOpacity, {
+      toValue: 1,
+      duration: 350,
+      useNativeDriver: true,
+    }).start();
+  }, [onboardingStep, logoOpacity]);
 
   const handleNextStep = () => {
     if (onboardingStep < 2) {
@@ -46,26 +100,51 @@ const CrovnneBullOnboard = () => {
     }
   };
 
+  const handleButtonPressIn = () => {
+    Animated.spring(buttonScale, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 40,
+      bounciness: 0,
+    }).start();
+  };
+
+  const handleButtonPressOut = () => {
+    Animated.spring(buttonScale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 30,
+      bounciness: 6,
+    }).start();
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        contentContainerStyle={{
-          flexGrow: 1,
-          alignItems: 'center',
-          paddingTop: height * 0.06,
-          paddingBottom: 30,
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: screenOpacity,
+          transform: [{ translateY: screenTranslateY }],
         }}
       >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            alignItems: 'center',
+            paddingTop: height * 0.06,
+            paddingBottom: 30,
+          }}
+        >
         <ImageBackground
           source={require('../assets/images/back_blur.png')}
           style={s.bgBlur}
         >
           {Platform.OS === 'ios' ? (
             <Image
-              source={require('../assets/images/loade_lLogo.png')}
-              style={{ width: 80, height: 80 }}
+              source={require('../assets/images/about_logo.png')}
+              style={{ width: 70, height: 70, borderRadius: 12 }}
             />
           ) : (
             <Image
@@ -96,28 +175,30 @@ const CrovnneBullOnboard = () => {
           }}
         />
 
-        <ImageBackground
-          source={require('../assets/images/back_blur.png')}
-          style={s.logoBgBlur}
-        >
-          <Image
-            source={onboardImages[onboardingStep]}
-            style={{
-              resizeMode: 'cover',
-            }}
-          />
-        </ImageBackground>
+        <Animated.View style={{ opacity: logoOpacity }}>
+          <ImageBackground
+            source={require('../assets/images/back_blur.png')}
+            style={s.logoBgBlur}
+          >
+            <Image
+              source={onboardImages[onboardingStep]}
+              style={{
+                resizeMode: 'cover',
+              }}
+            />
+          </ImageBackground>
+        </Animated.View>
 
-        <View>
-          <Text style={s.introSecondText}>
-            {onboardingStep === 0
-              ? 'I’m a bull who knows a lot about jokes. Bad ones won’t pass. Good ones will be remembered.'
-              : onboardingStep === 1
-              ? 'Write a joke, read other people’s, vote honestly. Whoever gets the most votes wins. I’m all about fairness.'
-              : 'Write a joke with your voice — I’ll rate it. Choose your categories, save your favorites and come back when you need a laugh.'}
-          </Text>
+        <View style={s.bottomContent}>
+          <Text style={s.introSecondText}>{typedIntroText}</Text>
 
-          <TouchableOpacity onPress={handleNextStep} activeOpacity={0.6}>
+          <AnimatedTouchableOpacity
+            onPress={handleNextStep}
+            onPressIn={handleButtonPressIn}
+            onPressOut={handleButtonPressOut}
+            activeOpacity={1}
+            style={{ width: '100%', transform: [{ scale: buttonScale }] }}
+          >
             <LinearGradient
               colors={goldGradient}
               style={s.button}
@@ -132,9 +213,10 @@ const CrovnneBullOnboard = () => {
                   : 'Start'}
               </Text>
             </LinearGradient>
-          </TouchableOpacity>
+          </AnimatedTouchableOpacity>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 };
@@ -167,6 +249,11 @@ const s = StyleSheet.create({
     marginTop: 33,
     fontFamily: regFont,
     paddingHorizontal: 30,
+    minHeight: 45,
+  },
+  bottomContent: {
+    width: '100%',
+    alignItems: 'center',
   },
   button: {
     borderRadius: 15,
