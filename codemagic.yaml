@@ -1,19 +1,19 @@
 workflows:
   ios-workflow:
-    name: Crovnne Bull Comedy Battle
+    name: 'Crovvn Bull: Joke Battle'
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: CrovnneBullComedyBattleAPIKey
+      app_store_connect: CrovvnBullJokeAPIKey
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.dfsfdsfdsfyy.yyus.sdvf
+        bundle_identifier: com.dsdfdsfsd.sdfsdfdsfds.ddddssa
       vars:
-        BUNDLE_ID: com.dfsfdsfdsfyy.yyus.sdvf
+        BUNDLE_ID: com.dsdfdsfsd.sdfsdfdsfds.ddddssa
         XCODE_WORKSPACE: CrovnneBullFunnyBattle.xcworkspace
         XCODE_SCHEME: CrovnneBullFunnyBattle
-        APP_STORE_APPLE_ID: 6759652608
+        APP_STORE_APPLE_ID: 6759717826
     scripts:
       - name: Install npm dependencies
         script: |
@@ -44,4 +44,4 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_app_store: true
-        copyright: Crovnne Bull Comedy Battle 2026
+        copyright: 'Crovvn Bull: Joke Battle 2026'

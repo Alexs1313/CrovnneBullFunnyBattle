@@ -143,7 +143,7 @@ const AboutBullScreen = () => {
     try {
       await Share.share({
         message:
-          'Crovnne Bull Comedy Battle is a fun social app for humorous competitions between friends. Write or voice your jokes, vote for the best ones, and find out the verdict of the charismatic Bull. Collect your favorite jokes, open categories, and prove that your humor is worthy of the crown.',
+          'Crovvn Bull: Joke Battle is a fun social app for humorous competitions between friends. Write or voice your jokes, vote for the best ones, and find out the verdict of the charismatic Bull. Collect your favorite jokes, open categories, and prove that your humor is worthy of the crown.',
       });
     } catch (error) {
       console.error('Share Error', error);
@@ -231,7 +231,7 @@ const AboutBullScreen = () => {
           </View>
 
           <Text style={styles.description}>
-            Crovnne Bull Comedy Battle is a fun social app for humorous
+            Crovvn Bull: Joke Battle is a fun social app for humorous
             competitions between friends. Write or voice your jokes, vote for
             the best ones and find out the verdict of the charismatic Bull.
             Collect your favorite jokes, open categories and prove that your

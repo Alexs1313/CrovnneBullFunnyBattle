@@ -1,15 +1,14 @@
 import { createStackNavigator } from '@react-navigation/stack';
 
 // local imports
-
-import WelcomeLoader from '../BattleScreens/WelcomeLoader';
-import CrovnneBullOnboard from '../BattleScreens/CrovnneBullOnboard';
-import FunnyBattleMenu from '../BattleScreens/FunnyBattleMenu';
-import TellBullJokeScreen from '../BattleScreens/TellBullJokeScreen';
-import SelectionOfJokesScreen from '../BattleScreens/SelectionOfJokesScreen';
-import SavedJokesScreen from '../BattleScreens/SavedJokesScreen';
-import AboutBullScreen from '../BattleScreens/AboutBullScreen';
-import PlayTogetherScreen from '../BattleScreens/PlayTogetherScreen';
+import WelcomeLoader from './[src]/BattleScreens/WelcomeLoader';
+import CrovnneBullOnboard from './[src]/BattleScreens/CrovnneBullOnboard';
+import FunnyBattleMenu from './[src]/BattleScreens/FunnyBattleMenu';
+import TellBullJokeScreen from './[src]/BattleScreens/TellBullJokeScreen';
+import SelectionOfJokesScreen from './[src]/BattleScreens/SelectionOfJokesScreen';
+import SavedJokesScreen from './[src]/BattleScreens/SavedJokesScreen';
+import AboutBullScreen from './[src]/BattleScreens/AboutBullScreen';
+import PlayTogetherScreen from './[src]/BattleScreens/PlayTogetherScreen';
 
 const Stack = createStackNavigator();
 

@@ -21,19 +21,48 @@ const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
 const startPosition = { x: 0, y: 2 };
 const endPosition = { x: 1, y: 0 };
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
 
-const ScaleTouchable = ({ children, style, disabled, onPress, onPressIn, onPressOut, ...props }) => {
+const ScaleTouchable = ({
+  children,
+  style,
+  disabled,
+  onPress,
+  onPressIn,
+  onPressOut,
+  ...props
+}) => {
   const scale = useRef(new Animated.Value(1)).current;
   const shakeX = useRef(new Animated.Value(0)).current;
 
   const runDisabledShake = () => {
     Animated.sequence([
-      Animated.timing(shakeX, { toValue: -6, duration: 35, useNativeDriver: true }),
-      Animated.timing(shakeX, { toValue: 6, duration: 35, useNativeDriver: true }),
-      Animated.timing(shakeX, { toValue: -4, duration: 30, useNativeDriver: true }),
-      Animated.timing(shakeX, { toValue: 4, duration: 30, useNativeDriver: true }),
-      Animated.timing(shakeX, { toValue: 0, duration: 25, useNativeDriver: true }),
+      Animated.timing(shakeX, {
+        toValue: -6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 6,
+        duration: 35,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: -4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 4,
+        duration: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeX, {
+        toValue: 0,
+        duration: 25,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -140,45 +169,48 @@ const SavedJokesScreen = () => {
           }}
         >
           <ScrollView
-            contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+            contentContainerStyle={[
+              styles.scroll,
+              { paddingTop: height * 0.07 },
+            ]}
             showsVerticalScrollIndicator={false}
           >
             <View style={[styles.header]}>
-            <ScaleTouchable
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Image source={require('../assets/icons/back_arrow.png')} />
-            </ScaleTouchable>
+              <ScaleTouchable
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Image source={require('../assets/icons/back_arrow.png')} />
+              </ScaleTouchable>
 
-            <Text style={styles.headerTitle}>Saved</Text>
+              <Text style={styles.headerTitle}>Saved</Text>
 
-            {Platform.OS === 'ios' ? (
-              <Image
-                source={require('../assets/images/about_logo.png')}
-                style={[
-                  styles.appIcon,
-                  {
-                    borderRadius: 12,
-                    borderWidth: 0.8,
-                    borderColor: '#E6CE67',
-                  },
-                ]}
-              />
-            ) : (
-              <Image
-                source={require('../assets/images/icon.png')}
-                style={[
-                  styles.appIcon,
-                  {
-                    borderRadius: 12,
-                    borderWidth: 0.8,
-                    borderColor: '#E6CE67',
-                  },
-                ]}
-              />
-            )}
-          </View>
+              {Platform.OS === 'ios' ? (
+                <Image
+                  source={require('../assets/images/about_logo.png')}
+                  style={[
+                    styles.appIcon,
+                    {
+                      borderRadius: 12,
+                      borderWidth: 0.8,
+                      borderColor: '#E6CE67',
+                    },
+                  ]}
+                />
+              ) : (
+                <Image
+                  source={require('../assets/images/icon.png')}
+                  style={[
+                    styles.appIcon,
+                    {
+                      borderRadius: 12,
+                      borderWidth: 0.8,
+                      borderColor: '#E6CE67',
+                    },
+                  ]}
+                />
+              )}
+            </View>
 
             <View style={styles.emptyWrap}>
               <Text style={styles.emptyText}>
@@ -205,62 +237,69 @@ const SavedJokesScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-          <ScaleTouchable
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Image source={require('../assets/icons/back_arrow.png')} />
-          </ScaleTouchable>
+            <ScaleTouchable
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Image source={require('../assets/icons/back_arrow.png')} />
+            </ScaleTouchable>
 
-          <Text style={styles.headerTitle}>Saved</Text>
+            <Text style={styles.headerTitle}>Saved</Text>
 
-          <Image
-            source={require('../assets/images/app_icon.png')}
-            style={styles.appIcon}
-          />
-        </View>
+            <Image
+              source={require('../assets/images/about_logo.png')}
+              style={[
+                styles.appIcon,
+                {
+                  borderRadius: 12,
+                  borderWidth: 0.8,
+                  borderColor: '#E6CE67',
+                },
+              ]}
+            />
+          </View>
 
           {saved.map((item, idx) => {
-          const meta = CATEGORY_META[item.category];
+            const meta = CATEGORY_META[item.category];
 
-          return (
-            <View key={idx} style={styles.card}>
-              <Image source={meta.image} style={styles.cardBull} />
+            return (
+              <View key={idx} style={styles.card}>
+                <Image source={meta.image} style={styles.cardBull} />
 
-              <View style={styles.cardContent}>
-                <Image
-                  source={meta.title}
-                  style={{ width: 160, height: 35, resizeMode: 'contain' }}
-                />
+                <View style={styles.cardContent}>
+                  <Image
+                    source={meta.title}
+                    style={{ width: 160, height: 35, resizeMode: 'contain' }}
+                  />
 
-                <Text style={styles.cardText}>{item.joke}</Text>
+                  <Text style={styles.cardText}>{item.joke}</Text>
 
-                <View style={styles.cardActions}>
-                  <ScaleTouchable
-                    activeOpacity={0.7}
-                    onPress={() => Share.share({ message: item.joke })}
-                    style={{ flex: 1 }}
-                  >
-                    <LinearGradient
-                      colors={goldGradient}
-                      style={styles.shareButton}
-                      start={startPosition}
-                      end={endPosition}
+                  <View style={styles.cardActions}>
+                    <ScaleTouchable
+                      activeOpacity={0.7}
+                      onPress={() => Share.share({ message: item.joke })}
+                      style={{ flex: 1 }}
                     >
-                      <Text style={styles.shareText}>Share</Text>
-                    </LinearGradient>
-                  </ScaleTouchable>
+                      <LinearGradient
+                        colors={goldGradient}
+                        style={styles.shareButton}
+                        start={startPosition}
+                        end={endPosition}
+                      >
+                        <Text style={styles.shareText}>Share</Text>
+                      </LinearGradient>
+                    </ScaleTouchable>
 
-                  <ScaleTouchable
-                    style={styles.trashButton}
-                    onPress={() => removeSavedJoke(item.joke)}
-                  >
-                    <Image source={require('../assets/icons/trash.png')} />
-                  </ScaleTouchable>
+                    <ScaleTouchable
+                      style={styles.trashButton}
+                      onPress={() => removeSavedJoke(item.joke)}
+                    >
+                      <Image source={require('../assets/icons/trash.png')} />
+                    </ScaleTouchable>
+                  </View>
                 </View>
               </View>
-            </View>
-          );
+            );
           })}
         </ScrollView>
       </Animated.View>
