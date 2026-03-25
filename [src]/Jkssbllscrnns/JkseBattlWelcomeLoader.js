@@ -1,4 +1,7 @@
+import { httmmlLoader } from '../Jkssbllconsts/httmmlLoader';
+
 import React, { useEffect, useRef } from 'react';
+
 import {
   Animated,
   View,
@@ -11,71 +14,73 @@ import {
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 
-import { bullFunnyHtmlLoader } from '../Constants/bullFunnyHtmlLoader';
+const jkseBattlBgColor = '#000';
 
-const bgColor = '#000';
-const logo = require('../assets/images/about_logo.png');
+const jkseBattlLogo = require('../assets/images/bttlbltabacemloaderic.png');
 
-const WelcomeLoader = () => {
-  const nav = useNavigation();
-  const timerRef = useRef(null);
-  const screenOpacity = useRef(new Animated.Value(0)).current;
-  const screenTranslateY = useRef(new Animated.Value(12)).current;
+const JkseBattlWelcomeLoader = () => {
+  const jkseBattlNav = useNavigation();
+  const jkseBattlTimerRef = useRef(null);
+  const jkseBattlScreenOpacity = useRef(new Animated.Value(0)).current;
+  const jkseBattlScreenTranslateY = useRef(new Animated.Value(12)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(screenOpacity, {
+      Animated.timing(jkseBattlScreenOpacity, {
         toValue: 1,
         duration: 320,
         useNativeDriver: true,
       }),
-      Animated.timing(screenTranslateY, {
+      Animated.timing(jkseBattlScreenTranslateY, {
         toValue: 0,
         duration: 320,
         useNativeDriver: true,
       }),
     ]).start();
-  }, [screenOpacity, screenTranslateY]);
+  }, [jkseBattlScreenOpacity, jkseBattlScreenTranslateY]);
 
   useEffect(() => {
-    timerRef.current = setTimeout(() => {
+    jkseBattlTimerRef.current = setTimeout(() => {
       try {
-        nav.replace('CrovnneBullOnboard');
+        jkseBattlNav.replace('Crovbbllonboard');
 
         console.log('nav success!');
-      } catch (err) {
-        console.warn('navigate error', err);
+      } catch (jkseBattlErr) {
+        console.warn('navigate error', jkseBattlErr);
         try {
-          nav.navigate('CrovnneBullOnboard');
-        } catch (err2) {
-          console.error('failed err2', err2);
+          jkseBattlNav.navigate('Crovbbllonboard');
+        } catch (jkseBattlErr2) {
+          console.error('failed err2', jkseBattlErr2);
         }
       }
     }, 5000);
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
+      if (jkseBattlTimerRef.current) {
+        clearTimeout(jkseBattlTimerRef.current);
+        jkseBattlTimerRef.current = null;
         console.log('[Loader] timer cleared on unmount');
       }
     };
-  }, [nav]);
+  }, [jkseBattlNav]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: bgColor }}>
+    <View style={{ flex: 1, backgroundColor: jkseBattlBgColor }}>
       <Animated.View
         style={{
           flex: 1,
-          opacity: screenOpacity,
-          transform: [{ translateY: screenTranslateY }],
+          opacity: jkseBattlScreenOpacity,
+          transform: [{ translateY: jkseBattlScreenTranslateY }],
         }}
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={sty.loaderContainer} accessibilityLabel="loader-screen">
+          <View
+            style={jkseBattlStyles.jkseBattlLoaderContainer}
+            accessibilityLabel="loader-screen"
+          >
             <ImageBackground
               source={require('../assets/images/back_blur.png')}
               style={{
@@ -86,10 +91,7 @@ const WelcomeLoader = () => {
               }}
             >
               {Platform.OS === 'ios' ? (
-                <Image
-                  source={logo}
-                  style={{ width: 250, height: 250, borderRadius: 42 }}
-                />
+                <Image source={jkseBattlLogo} />
               ) : (
                 <Image
                   source={require('../assets/images/icon.png')}
@@ -109,8 +111,8 @@ const WelcomeLoader = () => {
           >
             <WebView
               originWhitelist={['*']}
-              source={{ html: bullFunnyHtmlLoader }}
-              style={sty.webView}
+              source={{ html: httmmlLoader }}
+              style={jkseBattlStyles.jkseBattlWebView}
               scrollEnabled={false}
             />
           </View>
@@ -120,18 +122,18 @@ const WelcomeLoader = () => {
   );
 };
 
-const sty = StyleSheet.create({
-  loaderContainer: {
+const jkseBattlStyles = StyleSheet.create({
+  jkseBattlLoaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 650,
   },
-  webView: {
+  jkseBattlWebView: {
     width: 360,
     height: 180,
     backgroundColor: 'transparent',
   },
 });
 
-export default WelcomeLoader;
+export default JkseBattlWelcomeLoader;

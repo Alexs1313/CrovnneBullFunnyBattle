@@ -1,4 +1,4 @@
-export const bullFunnyHtmlLoader = `
+export const httmmlLoader = `
 <!DOCTYPE html>
 <html>
 <head>

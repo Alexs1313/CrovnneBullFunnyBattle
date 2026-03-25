@@ -1,5 +1,9 @@
+import LinearGradient from 'react-native-linear-gradient';
+
 import { useNavigation } from '@react-navigation/native';
+
 import React, { useEffect, useRef } from 'react';
+
 import {
   Animated,
   View,
@@ -12,18 +16,23 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 
-const regFont = 'OrelegaOne-Regular';
-const bgColor = '#000';
-const goldGradient = ['#E1C352', '#FFF9CC', '#E6CE67', '#EDE5BC', '#E2C23B'];
-const startPosition = { x: 0, y: 0 };
-const endPosition = { x: 1, y: 0 };
+const jkseBattlRegFont = 'OrelegaOne-Regular';
+const jkseBattlBgColor = '#000';
+const jkseBattlGoldGradient = [
+  '#E1C352',
+  '#FFF9CC',
+  '#E6CE67',
+  '#EDE5BC',
+  '#E2C23B',
+];
+const jkseBattlStartPosition = { x: 0, y: 0 };
+const jkseBattlEndPosition = { x: 1, y: 0 };
 
-const AnimatedTouchableOpacity =
+const JkseBattlAnimatedTouchableOpacity =
   Animated.createAnimatedComponent(TouchableOpacity);
 
-const ScaleTouchable = ({
+const JkseBattlScaleTouchable = ({
   children,
   style,
   disabled,
@@ -32,32 +41,32 @@ const ScaleTouchable = ({
   onPressOut,
   ...props
 }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const shakeX = useRef(new Animated.Value(0)).current;
+  const jkseBattlScale = useRef(new Animated.Value(1)).current;
+  const jkseBattlShakeX = useRef(new Animated.Value(0)).current;
 
-  const runDisabledShake = () => {
+  const jkseBattlRunDisabledShake = () => {
     Animated.sequence([
-      Animated.timing(shakeX, {
+      Animated.timing(jkseBattlShakeX, {
         toValue: -6,
         duration: 35,
         useNativeDriver: true,
       }),
-      Animated.timing(shakeX, {
+      Animated.timing(jkseBattlShakeX, {
         toValue: 6,
         duration: 35,
         useNativeDriver: true,
       }),
-      Animated.timing(shakeX, {
+      Animated.timing(jkseBattlShakeX, {
         toValue: -4,
         duration: 30,
         useNativeDriver: true,
       }),
-      Animated.timing(shakeX, {
+      Animated.timing(jkseBattlShakeX, {
         toValue: 4,
         duration: 30,
         useNativeDriver: true,
       }),
-      Animated.timing(shakeX, {
+      Animated.timing(jkseBattlShakeX, {
         toValue: 0,
         duration: 25,
         useNativeDriver: true,
@@ -65,11 +74,11 @@ const ScaleTouchable = ({
     ]).start();
   };
 
-  const handlePressIn = event => {
+  const jkseBattlHandlePressIn = event => {
     if (disabled) {
-      runDisabledShake();
+      jkseBattlRunDisabledShake();
     } else {
-      Animated.spring(scale, {
+      Animated.spring(jkseBattlScale, {
         toValue: 0.96,
         useNativeDriver: true,
         speed: 40,
@@ -80,8 +89,8 @@ const ScaleTouchable = ({
     onPressIn?.(event);
   };
 
-  const handlePressOut = event => {
-    Animated.spring(scale, {
+  const jkseBattlHandlePressOut = event => {
+    Animated.spring(jkseBattlScale, {
       toValue: 1,
       useNativeDriver: true,
       speed: 30,
@@ -91,9 +100,9 @@ const ScaleTouchable = ({
     onPressOut?.(event);
   };
 
-  const handlePress = event => {
+  const jkseBattlHandlePress = event => {
     if (disabled) {
-      runDisabledShake();
+      jkseBattlRunDisabledShake();
       return;
     }
 
@@ -101,45 +110,50 @@ const ScaleTouchable = ({
   };
 
   return (
-    <AnimatedTouchableOpacity
+    <JkseBattlAnimatedTouchableOpacity
       {...props}
       style={[
         style,
-        { transform: [{ translateX: shakeX }, { scale }] },
+        {
+          transform: [
+            { translateX: jkseBattlShakeX },
+            { scale: jkseBattlScale },
+          ],
+        },
         { alignSelf: 'center' },
       ]}
       activeOpacity={1}
-      onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+      onPress={jkseBattlHandlePress}
+      onPressIn={jkseBattlHandlePressIn}
+      onPressOut={jkseBattlHandlePressOut}
     >
       {children}
-    </AnimatedTouchableOpacity>
+    </JkseBattlAnimatedTouchableOpacity>
   );
 };
 
-const AboutBullScreen = () => {
-  const navigation = useNavigation();
-  const { height } = useWindowDimensions();
-  const screenOpacity = useRef(new Animated.Value(0)).current;
-  const screenTranslateY = useRef(new Animated.Value(12)).current;
+const JkseBattlAboutBullScreen = () => {
+  const jkseBattlNavigation = useNavigation();
+  const { height: jkseBattlHeight } = useWindowDimensions();
+  const jkseBattlScreenOpacity = useRef(new Animated.Value(0)).current;
+  const jkseBattlScreenTranslateY = useRef(new Animated.Value(12)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(screenOpacity, {
+      Animated.timing(jkseBattlScreenOpacity, {
         toValue: 1,
         duration: 320,
         useNativeDriver: true,
       }),
-      Animated.timing(screenTranslateY, {
+      Animated.timing(jkseBattlScreenTranslateY, {
         toValue: 0,
         duration: 320,
         useNativeDriver: true,
       }),
     ]).start();
-  }, [screenOpacity, screenTranslateY]);
+  }, [jkseBattlScreenOpacity, jkseBattlScreenTranslateY]);
 
-  const onShare = async () => {
+  const jkseBattlOnShare = async () => {
     try {
       await Share.share({
         message:
@@ -151,33 +165,36 @@ const AboutBullScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={jkseBattlStyles.jkseBattlContainer}>
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: height * 0.07 }]}
+        contentContainerStyle={[
+          jkseBattlStyles.jkseBattlScroll,
+          { paddingTop: jkseBattlHeight * 0.07 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <Animated.View
           style={{
             width: '100%',
-            opacity: screenOpacity,
-            transform: [{ translateY: screenTranslateY }],
+            opacity: jkseBattlScreenOpacity,
+            transform: [{ translateY: jkseBattlScreenTranslateY }],
           }}
         >
-          <View style={styles.header}>
-            <ScaleTouchable
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
+          <View style={jkseBattlStyles.jkseBattlHeader}>
+            <JkseBattlScaleTouchable
+              style={jkseBattlStyles.jkseBattlBackButton}
+              onPress={() => jkseBattlNavigation.goBack()}
             >
               <Image source={require('../assets/icons/back_arrow.png')} />
-            </ScaleTouchable>
+            </JkseBattlScaleTouchable>
 
-            <Text style={styles.headerTitle}>About</Text>
+            <Text style={jkseBattlStyles.jkseBattlHeaderTitle}>About</Text>
 
             {Platform.OS === 'ios' ? (
               <Image
                 source={require('../assets/images/about_logo.png')}
                 style={[
-                  styles.appIcon,
+                  jkseBattlStyles.jkseBattlAppIcon,
                   {
                     borderRadius: 12,
                     borderWidth: 0.8,
@@ -189,7 +206,7 @@ const AboutBullScreen = () => {
               <Image
                 source={require('../assets/images/icon.png')}
                 style={[
-                  styles.appIcon,
+                  jkseBattlStyles.jkseBattlAppIcon,
                   {
                     borderRadius: 12,
                     borderWidth: 0.8,
@@ -200,7 +217,7 @@ const AboutBullScreen = () => {
             )}
           </View>
 
-          <View style={styles.logoCard}>
+          <View style={jkseBattlStyles.jkseBattlLogoCard}>
             {Platform.OS === 'ios' ? (
               <Image
                 source={require('../assets/images/about_logo.png')}
@@ -230,7 +247,7 @@ const AboutBullScreen = () => {
             )}
           </View>
 
-          <Text style={styles.description}>
+          <Text style={jkseBattlStyles.jkseBattlDescription}>
             Crovvn Bull: Joke Battle is a fun social app for humorous
             competitions between friends. Write or voice your jokes, vote for
             the best ones and find out the verdict of the charismatic Bull.
@@ -238,33 +255,36 @@ const AboutBullScreen = () => {
             humor is worthy of the crown.
           </Text>
 
-          <ScaleTouchable activeOpacity={0.7} onPress={onShare}>
+          <JkseBattlScaleTouchable
+            activeOpacity={0.7}
+            onPress={jkseBattlOnShare}
+          >
             <LinearGradient
-              colors={goldGradient}
-              start={startPosition}
-              end={endPosition}
-              style={styles.shareButton}
+              colors={jkseBattlGoldGradient}
+              start={jkseBattlStartPosition}
+              end={jkseBattlEndPosition}
+              style={jkseBattlStyles.jkseBattlShareButton}
             >
-              <Text style={styles.shareText}>Share</Text>
+              <Text style={jkseBattlStyles.jkseBattlShareText}>Share</Text>
             </LinearGradient>
-          </ScaleTouchable>
+          </JkseBattlScaleTouchable>
         </Animated.View>
       </ScrollView>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
+const jkseBattlStyles = StyleSheet.create({
+  jkseBattlContainer: {
     flex: 1,
-    backgroundColor: bgColor,
+    backgroundColor: jkseBattlBgColor,
   },
-  scroll: {
+  jkseBattlScroll: {
     alignItems: 'center',
     padding: 20,
     flexGrow: 1,
   },
-  header: {
+  jkseBattlHeader: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -275,7 +295,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 40,
   },
-  backButton: {
+  jkseBattlBackButton: {
     width: 56,
     height: 56,
     borderRadius: 12,
@@ -284,42 +304,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTitle: {
+  jkseBattlHeaderTitle: {
     color: '#fff',
-    fontFamily: regFont,
+    fontFamily: jkseBattlRegFont,
     fontSize: 20,
   },
-  appIcon: {
+  jkseBattlAppIcon: {
     width: 56,
     height: 56,
   },
-  logoCard: {
+  jkseBattlLogoCard: {
     marginBottom: 30,
   },
-  logoImage: {
+  jkseBattlLogoImage: {
     resizeMode: 'cover',
   },
-  description: {
+  jkseBattlDescription: {
     color: '#fff',
-    fontFamily: regFont,
+    fontFamily: jkseBattlRegFont,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: 40,
     paddingHorizontal: 10,
   },
-  shareButton: {
+  jkseBattlShareButton: {
     width: 260,
     height: 64,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  shareText: {
+  jkseBattlShareText: {
     color: '#000',
-    fontFamily: regFont,
+    fontFamily: jkseBattlRegFont,
     fontSize: 20,
   },
 });
 
-export default AboutBullScreen;
+export default JkseBattlAboutBullScreen;

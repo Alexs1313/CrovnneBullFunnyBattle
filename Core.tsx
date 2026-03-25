@@ -1,13 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 
-import { StoreProvider } from './[src]/Storage/bullBattleContext';
-import BullBattleNavigation from './BullBattleNavigation';
+import { StoreProvider } from './[src]/Jkssbllstorage/bullBattleContext';
+
+import StacckkRoutee from './StacckkRoutee';
 
 const Core = () => {
   return (
     <NavigationContainer>
       <StoreProvider>
-        <BullBattleNavigation />
+        <StacckkRoutee />
       </StoreProvider>
     </NavigationContainer>
   );
